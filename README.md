@@ -18,10 +18,8 @@
 
 카테고리 선택 → 중복 선택 가능
 
-![image](https://github.com/user-attachments/assets/ffd24742-8cfe-4743-97f8-03277cca0e02)
-
+![image](https://github.com/user-attachments/assets/ffd24742-8cfe-4743-97f8-03277cca0e02) 
 ![image](https://github.com/user-attachments/assets/0183c333-780b-4b85-b2f3-752b51fa6025)
-
 
 1. 카테고리에 전부 해당되는 음식 / 하나씩 해당되는 음식들을 전부 불러오기
 2. 선택된 카테고리에 따라 해당되는 데이터를 LazyRow 로 음식 카드 정렬
