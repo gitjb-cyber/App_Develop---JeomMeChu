@@ -22,8 +22,10 @@
 ![image](https://github.com/user-attachments/assets/0183c333-780b-4b85-b2f3-752b51fa6025)
 
 1. 카테고리에 전부 해당되는 음식 / 하나씩 해당되는 음식들을 전부 불러오기
-2. 선택된 카테고리에 따라 해당되는 데이터를 LazyRow 로 음식 카드 정렬
-3. 해당되는 음식을 무작위로 5개 추천
+2. 유저 선택에 해당되는 메뉴들를 LazyRow 를 통해 정렬
+3. 메뉴 아래에 유저의 선택 카테고리 표기
+4. 국가별 메뉴 나열 후 아래에 메뉴 5개 무작위로 추천
+   
 
 ![image](https://github.com/user-attachments/assets/93ae5813-e53b-46c5-900f-5a4b7f912bb6)
 
