@@ -34,8 +34,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import eu.tutorials.jeommechu.R
 import eu.tutorials.jeommechu.view.AppBarView
+import eu.tutorials.jeommechu.view.StatusBarView
 import eu.tutorials.jeommechu.viewmodel.MainViewModel
 import kotlinx.coroutines.delay
 
@@ -45,6 +47,7 @@ fun RouletteScreen(
     navController: NavController,
     mainViewModel: MainViewModel = viewModel()
 ) {
+    StatusBarView()
     var isSpinning by remember { mutableStateOf(false) }
     var selectedValue by remember { mutableStateOf("❓") }
     val matchingConditions = mainViewModel.matchingConditions.value.toList()
@@ -72,9 +75,7 @@ fun RouletteScreen(
     Scaffold(
         // AppBarView 의 topBar 내부
         topBar = {
-            AppBarView(
-                title = "랜덤 선택"
-            )
+            AppBarView(navController = navController)
             { navController.navigateUp() }
         }
     ) { innerPadding ->

@@ -29,9 +29,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import eu.tutorials.jeommechu.R
 import eu.tutorials.jeommechu.view.AppBarView
 import eu.tutorials.jeommechu.view.FoodCard
+import eu.tutorials.jeommechu.view.StatusBarView
 import eu.tutorials.jeommechu.viewmodel.MainViewModel
 
 @SuppressLint("ResourceAsColor")
@@ -40,6 +42,7 @@ fun RecommendationScreen(
     navController: NavController,
     mainViewModel: MainViewModel = viewModel()
 ) {
+    StatusBarView()
     val matchingConditions by mainViewModel.matchingConditions
     val toggleConditions by mainViewModel.toggleConditions
 
@@ -47,12 +50,12 @@ fun RecommendationScreen(
     Scaffold(
         // AppBarView 의 topBar 내부
         topBar = {
-            AppBarView(
-                title = "추전 음식"
-            )
+            AppBarView(navController)
             // ← 아이콘 버튼을 누르면 뒤로 돌아감
             //  navigateUp : 사용자를 이전에 있던 화면으로 돌아가게 하는 것
-            { navController.navigateUp() }
+            {
+                navController.navigateUp()
+            }
         }
     ) { innerPadding ->
         LazyColumn(

@@ -1,46 +1,45 @@
 package eu.tutorials.jeommechu.view
 
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.unit.dp
-import eu.tutorials.jeommechu.R
+import androidx.navigation.NavController
+import eu.tutorials.jeommechu.screen_view.ScreenRoute
 
 @Composable
 fun AppBarView(
-    title: String,
+    navController: NavController,
     onBackNavClicked: () -> Unit
 ) {
+    val isDarkMode = isSystemInDarkTheme()
+    val backgroundColor = if (isDarkMode) Color.Black else Color.White
+    val iconColor = if (isDarkMode) Color.White else Color.Black
+
     TopAppBar(
-        title = {
-            Text(
-                text = title,
-                color = colorResource(id = R.color.white),
-                modifier = Modifier
-                    .padding(start = 4.dp)
-                    .heightIn(max = 24.dp),
-                fontFamily = FontFamily(Font(R.font.jua_regular))
-            )
-        },
-        backgroundColor = colorResource(id = R.color.app_bar_color),
-        elevation = 3.dp,
+        title = {},
+        backgroundColor = backgroundColor,
         navigationIcon = {
             IconButton(onClick = { onBackNavClicked() }) {
                 Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    tint = Color.White,
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                    tint = iconColor,
                     contentDescription = "뒤로가기"
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = { navController.navigate(ScreenRoute.CalendarMemoScreen.route)} ) {
+                Icon(
+                    imageVector = Icons.Filled.DateRange,
+                    contentDescription = "캘린더 화면 이동"
                 )
             }
         }

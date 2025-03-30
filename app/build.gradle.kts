@@ -51,6 +51,9 @@ android {
 
 dependencies {
 
+    // 상단바 조작
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.31.1-alpha")
+
     implementation("androidx.coordinatorlayout:coordinatorlayout:1.2.0")
 
     val compose_version = "1.6.0-alpha08"

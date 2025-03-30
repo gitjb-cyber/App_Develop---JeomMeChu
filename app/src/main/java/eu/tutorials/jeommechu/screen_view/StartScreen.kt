@@ -36,11 +36,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import eu.tutorials.jeommechu.R
+import eu.tutorials.jeommechu.view.StatusBarView
 import kotlinx.coroutines.delay
 
 // 처음 화면
 @Composable
 fun StartScreen(navController: NavController) {
+    StatusBarView()
     // 이미지가 보이는지 여부를 제어하는 상태
     var visible1 by remember { mutableStateOf(false) }
     var visible2 by remember { mutableStateOf(false) }
@@ -120,9 +122,9 @@ fun StartScreen(navController: NavController) {
                     )
                     {
                         Text(
-                            text = "메뉴 추천",
+                            text = "시작하기",
                             color = MaterialTheme.colorScheme.primary,
-                            fontSize = 24.sp,
+                            fontSize = 16.sp,
                             fontFamily = FontFamily(Font(R.font.jua_regular))
                         ) }
                 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import eu.tutorials.jeommechu.screen_view.CalendarMemoScreen
 import eu.tutorials.jeommechu.screen_view.RecommendationScreen
 import eu.tutorials.jeommechu.screen_view.RouletteScreen
 import eu.tutorials.jeommechu.screen_view.ScreenRoute
@@ -33,6 +34,10 @@ fun Navigation(navController: NavHostController) {
         */
         composable(ScreenRoute.RouletteScreen.route) {
             RouletteScreen(navController, mainViewModel)
+        }
+
+        composable(ScreenRoute.CalendarMemoScreen.route) {
+            CalendarMemoScreen(navController)
         }
     }
 }

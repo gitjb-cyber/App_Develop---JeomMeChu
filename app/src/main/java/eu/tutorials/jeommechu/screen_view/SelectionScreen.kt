@@ -3,8 +3,7 @@ package eu.tutorials.jeommechu.screen_view
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,9 +25,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.flowlayout.FlowRow
 import eu.tutorials.jeommechu.R
 import eu.tutorials.jeommechu.view.AppBarView
+import eu.tutorials.jeommechu.view.StatusBarView
 import eu.tutorials.jeommechu.viewmodel.MainViewModel
 
 @SuppressLint("ResourceAsColor")
@@ -37,6 +38,11 @@ fun SelectionScreen(
     navController: NavController,
     mainViewModel: MainViewModel = viewModel()
 ) {
+    StatusBarView()
+    val isDarkMode = isSystemInDarkTheme()
+    val backgroundColor = if (isDarkMode) Color.Black else Color.White
+    val textColor = if (isDarkMode) Color.White else Color.Black
+
     val buttonMappings = mapOf(
         "밥빵면" to listOf("밥🍚", "빵🍔", "면🍝", "떡", "탄수화물 X", "기타"),
         "국물" to listOf("국물⭕", "국물❌"),
@@ -49,9 +55,7 @@ fun SelectionScreen(
     Scaffold(
         // AppBarView 의 topBar 내부
         topBar = {
-            AppBarView(
-                title = "선택 목록"
-            )
+            AppBarView(navController = navController)
             // ← 아이콘 버튼을 누르면 뒤로 돌아감
             //  navigateUp : 사용자를 이전에 있던 화면으로 돌아가게 하는 것
             { navController.navigateUp() }
@@ -62,13 +66,13 @@ fun SelectionScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .background(colorResource(id = R.color.app_background_color))
+                .background(color = backgroundColor)
         ) {
             item {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = " 음식을 선택하세요",
-                    color = Color.Black,
+                    color = textColor,
                     style = MaterialTheme.typography.titleLarge,
                     fontFamily = FontFamily(Font(R.font.jua_regular),
                     )
@@ -81,7 +85,7 @@ fun SelectionScreen(
                     Text(
                         text = " $row",
                         style = MaterialTheme.typography.titleMedium,
-                        color = Color.Black,
+                        color = textColor,
                         modifier = Modifier.padding(vertical = 4.dp),
                         fontFamily = FontFamily(Font(R.font.jua_regular))
                     )
