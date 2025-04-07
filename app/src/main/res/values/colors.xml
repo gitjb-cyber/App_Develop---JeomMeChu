@@ -9,7 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="app_bar_color">#FFDD1E5F</color>
     <color name="gray">#FFA9A9A9</color>
-    <color name="light_gray">#FFD9D9D9</color>
+    <color name="light_gray">#FFE9E9E9</color>
     <color name="dark_gray">#FF696969</color>
-    <color name="app_background_color">#FFB2E9D5</color>
+    <color name="app_color">#FFFF8787</color>
 </resources>

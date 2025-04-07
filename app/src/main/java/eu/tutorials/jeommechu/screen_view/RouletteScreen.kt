@@ -44,7 +44,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun RouletteScreen(
     navController: NavController,
-    mainViewModel: MainViewModel = viewModel()
+    mainViewModel: MainViewModel
 ) {
     StatusBarView()
     var isSpinning by remember { mutableStateOf(false) }
@@ -79,7 +79,7 @@ fun RouletteScreen(
         }
     ) { innerPadding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(innerPadding).background(colorResource(id = R.color.app_background_color)),
+            modifier = Modifier.fillMaxSize().padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {

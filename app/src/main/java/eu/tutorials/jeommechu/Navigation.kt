@@ -5,7 +5,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import eu.tutorials.jeommechu.screen_view.CalendarMemoScreen
+import androidx.navigation.compose.rememberNavController
+import eu.tutorials.jeommechu.screen_view.CalendarMemo.CalendarMemoScreen
 import eu.tutorials.jeommechu.screen_view.RecommendationScreen
 import eu.tutorials.jeommechu.screen_view.RouletteScreen
 import eu.tutorials.jeommechu.screen_view.ScreenRoute
@@ -14,8 +15,10 @@ import eu.tutorials.jeommechu.screen_view.StartScreen
 import eu.tutorials.jeommechu.viewmodel.MainViewModel
 
 @Composable
-fun Navigation(navController: NavHostController) {
-    val mainViewModel: MainViewModel = viewModel()
+fun Navigation(
+    navController: NavHostController = rememberNavController(),
+    mainViewModel: MainViewModel = viewModel()
+) {
 
     NavHost(navController = navController, startDestination = ScreenRoute.StartScreen.route) {
         composable(ScreenRoute.StartScreen.route) {

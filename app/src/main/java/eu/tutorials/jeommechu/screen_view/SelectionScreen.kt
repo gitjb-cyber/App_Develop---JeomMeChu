@@ -2,6 +2,7 @@ package eu.tutorials.jeommechu.screen_view
 
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Spacer
@@ -10,8 +11,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -34,7 +37,7 @@ import eu.tutorials.jeommechu.viewmodel.MainViewModel
 @Composable
 fun SelectionScreen(
     navController: NavController,
-    mainViewModel: MainViewModel = viewModel()
+    mainViewModel: MainViewModel
 ) {
     StatusBarView()
     val isDarkMode = isSystemInDarkTheme()
@@ -94,7 +97,8 @@ fun SelectionScreen(
                             ToggleButton(
                                 text = button,
                                 isChecked = mainViewModel.buttonStates.value[button] ?: false,
-                                onCheckedChange = { mainViewModel.toggleButton(button) }
+                                onCheckedChange = { mainViewModel.toggleButton(button) },
+
                             )
                         }
                     }
@@ -105,13 +109,15 @@ fun SelectionScreen(
             // "선택 완료" 버튼
             item {
                 Spacer(modifier = Modifier.height(16.dp))
-                Button(
+                ElevatedButton(
                     onClick = {
                         mainViewModel.updateMatchingConditions()
                         navController.navigate(ScreenRoute.RecommendationScreen.route)
                     },
                     modifier = Modifier.fillMaxWidth()
-                        .padding(horizontal = 64.dp)
+                        .padding(horizontal = 64.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(R.color.app_color))
                 ) {
                     Text(
                         text = "선택 완료",
@@ -120,6 +126,7 @@ fun SelectionScreen(
                         )
                     )
                 }
+                Spacer(modifier = Modifier.height(24.dp))
             }
         }
     }
@@ -132,8 +139,11 @@ fun ToggleButton(text: String, isChecked: Boolean, onCheckedChange: (Boolean) ->
     Button(
         onClick = { onCheckedChange(!isChecked) },
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (isChecked) MaterialTheme.colorScheme.primary else Color(R.color.light_gray)
+            containerColor = if (isSystemInDarkTheme()) Color.White else Color.LightGray,
+            disabledContainerColor = Color.LightGray
         ),
+        shape = RoundedCornerShape(8.dp),
+        border = BorderStroke(2.dp, if (isChecked) Color.Red else Color.Transparent),
         modifier = Modifier.padding(4.dp)
     ) {
         Text(text,

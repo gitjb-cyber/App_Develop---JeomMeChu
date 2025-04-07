@@ -39,7 +39,7 @@ import eu.tutorials.jeommechu.viewmodel.MainViewModel
 @Composable
 fun RecommendationScreen(
     navController: NavController,
-    mainViewModel: MainViewModel = viewModel()
+    mainViewModel: MainViewModel
 ) {
     StatusBarView()
     val matchingConditions by mainViewModel.matchingConditions
@@ -61,7 +61,6 @@ fun RecommendationScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .background(colorResource(id = R.color.app_background_color))
         ) {
             item {
                 Row(

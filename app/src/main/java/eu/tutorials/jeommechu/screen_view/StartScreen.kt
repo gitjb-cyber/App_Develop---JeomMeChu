@@ -41,7 +41,9 @@ import kotlinx.coroutines.delay
 
 // 처음 화면
 @Composable
-fun StartScreen(navController: NavController) {
+fun StartScreen(
+    navController: NavController
+) {
     StatusBarView()
     // 이미지가 보이는지 여부를 제어하는 상태
     var visible1 by remember { mutableStateOf(false) }
@@ -61,21 +63,13 @@ fun StartScreen(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.app_background_color))
+            .background(colorResource(id = R.color.app_color)),
     ) {
-        // 배경 이미지
-        Image(
-            painter = painterResource(id = R.drawable.main_img_back),
-            contentDescription = "배경 이미지",
-            contentScale = ContentScale.Fit, // 화면을 자연스럽게 채우기
-            modifier = Modifier.fillMaxSize()
-        )
-
         Column(
             modifier = Modifier
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly
+            verticalArrangement = Arrangement.SpaceEvenly,
         ) {
             AnimatedVisibility(
                 visible = visible1,
@@ -88,7 +82,7 @@ fun StartScreen(navController: NavController) {
             ) {
                 // 메인 이미지
                 Image(
-                    painter = painterResource(id = R.drawable.main_img_contents2),
+                    painter = painterResource(id = R.drawable.main_img_contents),
                     contentDescription = "메인 이미지",
                     contentScale = ContentScale.FillWidth,
                     modifier = Modifier
@@ -159,53 +153,48 @@ internal fun PreviewSampleContainer() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.app_background_color))
+            .background(colorResource(id = R.color.app_color))
     ) {
-        // 배경 이미지
-        Image(
-            painter = painterResource(id = R.drawable.main_img_back),
-            contentDescription = "배경 이미지",
-            contentScale = ContentScale.Fit, // 화면을 자연스럽게 채우기
-            modifier = Modifier.fillMaxSize()
-        )
-
         Column(
             modifier = Modifier
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
+
+
             // 메인 이미지
             Image(
-                painter = painterResource(id = R.drawable.main_img_contents2),
+                painter = painterResource(id = R.drawable.main_img_contents),
                 contentDescription = "메인 이미지",
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 40.dp)
             )
+        }
 
-            // 하단 버튼
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 64.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally // 버튼 중앙 정렬
-            ) {
-                ElevatedButton(
-                    onClick = { },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = buttonColors(containerColor = Color.White)
-                ) {
-                    Text(
-                        text = "메뉴 추천",
-                        color = MaterialTheme.colorScheme.primary,
-                        fontSize = 24.sp,
-                        fontFamily = FontFamily(Font(R.font.jua_regular))
-                    )
-                }
+        // 하단 버튼
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 64.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally // 버튼 중앙 정렬
+        ) {
+            ElevatedButton(
+                onClick = {},
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                colors = buttonColors(containerColor = Color.White)
+            )
+            {
+                Text(
+                    text = "시작하기",
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.jua_regular))
+                )
             }
         }
     }

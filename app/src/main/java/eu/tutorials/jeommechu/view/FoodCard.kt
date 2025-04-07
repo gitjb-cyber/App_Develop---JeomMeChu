@@ -1,6 +1,7 @@
 package eu.tutorials.jeommechu.view
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -56,8 +57,9 @@ fun FoodCard(
                         ),
                         border = BorderStroke(1.dp, Color.Black),
                         modifier = Modifier
+                            .clickable { /* TODO */ }
                             .padding(8.dp)
-                            .size(200.dp)
+                            .size(200.dp),
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             // 카드 상단에 해당 key 표시

@@ -1,6 +1,10 @@
-package eu.tutorials.jeommechu.screen_view
+package eu.tutorials.jeommechu.screen_view.CalendarMemo
 
+import android.os.Build
 import android.widget.CalendarView
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,19 +12,23 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Divider
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -29,25 +37,28 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
+import eu.tutorials.jeommechu.data.FoodsData
+import java.time.LocalDate
 
+/* 위시리스트 앱의 홈뷰와 비교하며 수정*/
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CalendarMemoScreen(
-    navController: NavController,
-    //mainViewModel: MainViewModel = viewModel()
-) {
+fun CalendarMemoScreen(navController: NavController) {
     val isDarkMode = isSystemInDarkTheme()
-    val backgroundColor = if (isDarkMode) Color.Black else Color.White
     val iconColor = if (isDarkMode) Color.White else Color.Black
 
-    // 날짜를 "yyyy-MM-dd" 형식으로 저장하기 위한 맵 (날짜 -> 메모)
     val memoMap = remember { mutableStateMapOf<String, String>() }
-    var selectedDate by remember { mutableStateOf("") }
+    var selectedDate by remember { mutableStateOf(LocalDate.now().toString()) } // 오늘 날짜로 초기화
     var currentMemo by remember { mutableStateOf("") }
+
+    // 음식 제목과 마지막 태그를 포함한 추천 리스트
+    val suggestions = FoodsData.foodsList.map { food ->
+        "${food.title} (${food.tags.lastOrNull()?.title ?: ""})"
+    }
 
     Scaffold(
         topBar = {
@@ -70,44 +81,35 @@ fun CalendarMemoScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // Android의 CalendarView를 Compose에 포함
             AndroidView(
                 factory = { context ->
                     CalendarView(context).apply {
-                        // 날짜가 선택되면 콜백을 통해 선택한 날짜를 업데이트
+                        val today = LocalDate.now()
+                        date = today.toEpochDay() * 24 * 60 * 60 * 1000 // 오늘 날짜로 이동
+
                         setOnDateChangeListener { _, year, month, dayOfMonth ->
-                            // CalendarView의 month는 0부터 시작하므로 1을 더해줍니다.
-                            selectedDate = "$year-${
-                                (month + 1).toString().padStart(2, '0')
-                            }-${dayOfMonth.toString().padStart(2, '0')}"
-                            // 해당 날짜의 메모를 불러옵니다.
+                            selectedDate = "$year-${(month + 1).toString().padStart(2, '0')}-${dayOfMonth.toString().padStart(2, '0')}"
                             currentMemo = memoMap[selectedDate] ?: ""
                         }
                     }
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(350.dp)
+                modifier = Modifier.wrapContentSize()
             )
+
             Spacer(modifier = Modifier.height(16.dp))
-            Text(text = "선택한 날짜: ${if (selectedDate.isEmpty()) "없음" else selectedDate}")
+            Text(text = "선택한 날짜: $selectedDate") // 초기 값이 오늘 날짜로 설정됨
 
             Spacer(modifier = Modifier.height(8.dp))
-            OutlinedTextField(
-                value = currentMemo,
-                onValueChange = { currentMemo = it },
-                label = { Text("음식 메모") },
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
+            AutoCompleteTextField(
+                suggestions = suggestions,
+                currentMemo = currentMemo,
+                onTextChange = { newText -> currentMemo = newText },
+                modifier = Modifier.padding(16.dp)
             )
 
             Spacer(modifier = Modifier.height(8.dp))
             Button(
-                onClick = {
-                    if (selectedDate.isNotEmpty()) {
-                        memoMap[selectedDate] = currentMemo
-                    }
-                },
+                onClick = { memoMap[selectedDate] = currentMemo },
                 modifier = Modifier.align(Alignment.End)
             ) {
                 Text("저장")
@@ -120,6 +122,63 @@ fun CalendarMemoScreen(
             ) {
                 items(memoMap.toList()) { (date, memoText) ->
                     Text(text = "$date: $memoText", modifier = Modifier.padding(4.dp))
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun AutoCompleteTextField(
+    suggestions: List<String>,
+    currentMemo: String,
+    onTextChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var query by remember { mutableStateOf(currentMemo) }
+
+    // 부모 상태(currentMemo)가 변경되면 query 업데이트
+    LaunchedEffect(currentMemo) {
+        query = currentMemo
+    }
+
+    // 입력한 query에 따라 필터링된 추천 리스트
+    val filteredSuggestions = suggestions.filter {
+        it.contains(query, ignoreCase = true) && query.isNotBlank()
+    }
+
+    Column(modifier) {
+        // 텍스트 필드
+        TextField(
+            value = query,
+            onValueChange = {
+                query = it
+                onTextChange(it)
+            },
+            label = { Text("무엇을 드셨나요?") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        // 텍스트 필드 아래에 추천 리스트 표시
+        if (filteredSuggestions.isNotEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surface)
+            ) {
+                filteredSuggestions.forEach { suggestion ->
+                    Text(
+                        text = suggestion,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                query = suggestion
+                                onTextChange(suggestion)
+                            }
+                            .padding(8.dp)
+                    )
+                    Divider()
                 }
             }
         }

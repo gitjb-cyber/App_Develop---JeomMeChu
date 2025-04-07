@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
 }
 
 android {
@@ -68,10 +69,11 @@ dependencies {
     // Room
     implementation("androidx.room:room-runtime:$room")
     implementation("androidx.room:room-ktx:$room")
-
+    kapt("androidx.room:room-compiler:$room")
 
     implementation("androidx.compose.material:material:$compose_version")
     implementation("androidx.compose.ui:ui:$compose_version")
+    implementation("androidx.compose.ui:ui-tooling-preview:$compose_version")
 
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 

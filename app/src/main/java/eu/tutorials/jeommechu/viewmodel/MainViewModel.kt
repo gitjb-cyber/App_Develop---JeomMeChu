@@ -7,7 +7,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import eu.tutorials.jeommechu.data.FoodsData
 
-class MainViewModel : ViewModel() {
+class MainViewModel(
+
+) : ViewModel() {
     // 조건과 일치하는 음식 제목들을 저장하는 상태 변수
     private val _matchingConditions = mutableStateOf<Set<String>>(emptySet())
     val matchingConditions: State<Set<String>> = _matchingConditions
@@ -19,6 +21,14 @@ class MainViewModel : ViewModel() {
     // 각 버튼(옵션)의 선택 상태를 저장하는 상태 변수
     private val _buttonStates = mutableStateOf(mutableMapOf<String, Boolean>())
     val buttonStates: State<Map<String, Boolean>> = _buttonStates
+
+    // 랜덤 메뉴 돌리기 전 나오는 기본 텍스트
+    var selectedCondition by mutableStateOf("❓")
+        private set
+
+    fun updateSelectedCondition(newValue: String) {
+        selectedCondition = newValue
+    }
 
     // 버튼 클릭 시 상태를 토글하는 함수
     fun toggleButton(button: String) {
@@ -77,12 +87,5 @@ class MainViewModel : ViewModel() {
     fun getMatchingConditionsMap(conditions: Set<String>): Map<String, List<String>> {
         return FoodsData.foodsList.filter { it.title in conditions }
             .associate { it.title to it.tags.map { tag -> tag.title } }
-    }
-
-    var selectedCondition by mutableStateOf("❓")
-        private set
-
-    fun updateSelectedCondition(newValue: String) {
-        selectedCondition = newValue
     }
 }
