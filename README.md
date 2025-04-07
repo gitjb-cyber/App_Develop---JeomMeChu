@@ -1,32 +1,37 @@
-# App:점메추
+# App:점메추(Food Recommendations App)
+---
 
-- 제작 계기
-1. 밖에서 활동하다 팀원들과 항상 점심 메뉴가 항상 고민.
-2. 음식 메뉴를 추천해주는 웹사이트나 어플을 보면 메뉴 단 하나만 랜덤 출력.
-3. 내가 당일 원하는 다양한 음식 카테고리를 고르면 그에 맞는 음식들이 나열되어 그 나열된 메뉴 중 하나를 고르고 싶었음. 
+### 소개
+---
 
-![Map](https://github.com/user-attachments/assets/bf9e8e9d-bad6-4994-81cd-db26d073422e)
+![Food Recommendations App](https://github.com/user-attachments/assets/8906b7a0-10e2-4b1e-99af-7ca1269fb4ce)
 
-### 실행 화면
+- 카테고리 선택 형식
+- 매운 음식과 맵지 않은 음식, 뜨거운 음식과 차가운 음식 등
+- 당일 원하는 느낌의 카테고리를 선택하면 해당 음식들을 추천
 
-![image](https://github.com/user-attachments/assets/8712c6ef-3a92-4fd7-b021-45777600fc16)
+### 카테고리 선택
+---
 
-처음 화면
+![카테고리 선택-결과(github)](https://github.com/user-attachments/assets/1f37a8c5-a342-4204-b5ed-2e5d00ab7dbb)
 
-![image](https://github.com/user-attachments/assets/e818da19-7c39-457e-9eca-a151fe462825)
+![Map](https://github.com/user-attachments/assets/8afd9116-c2cf-4c48-af39-48bae78983b2)
 
 
-카테고리 선택 → 중복 선택 가능
+### 달력 메모
+---
 
-![image](https://github.com/user-attachments/assets/ffd24742-8cfe-4743-97f8-03277cca0e02) 
-![image](https://github.com/user-attachments/assets/0183c333-780b-4b85-b2f3-752b51fa6025)
+![달력 메모](https://github.com/user-attachments/assets/0ee34c7a-080a-4a38-a123-3b4c87497e86)
 
-1. 카테고리에 전부 해당되는 음식 / 하나씩 해당되는 음식들을 전부 불러오기
-2. 유저 선택에 해당되는 메뉴들를 LazyRow 를 통해 정렬
-3. 메뉴 아래에 유저의 선택 카테고리 표기
-4. 국가별 메뉴 나열 후 아래에 메뉴 5개 무작위로 추천
-   
+- 오른쪽 상단 달력 메모 기능
+- *추가예정*
+  - 먹은 음식 칼로리 계산
+  - 어제~1주전 먹은 음식 추천 제외
+  - 아침/점심/저녁 식단 분리
 
-![image](https://github.com/user-attachments/assets/93ae5813-e53b-46c5-900f-5a4b7f912bb6)
+### 랜덤 선택
+---
 
-랜덤으로 데이터에서 하나 추출
+![랜덤 메뉴 추천(github)](https://github.com/user-attachments/assets/a72e3adc-4fba-45ad-a70e-9fee24c0547d)
+
+- 추천 받은 데이터에서 무작위로 하나 추천(재시작 가능)
