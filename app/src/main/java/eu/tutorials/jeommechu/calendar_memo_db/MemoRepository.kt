@@ -2,24 +2,11 @@ package eu.tutorials.jeommechu.calendar_memo_db
 
 import kotlinx.coroutines.flow.Flow
 
-/*
-
 class MemoRepository(private val memoDao: MemoDao) {
+    val allMemos: Flow<List<Memo>> = memoDao.getAllMemos()
 
-    suspend fun addMemo(memo: Memo){
-        memoDao.addMemo(memo)
-    }
-
-    fun getAllMemos() : Flow<List<Memo>> = memoDao.getAllMemos()
-
-    suspend fun updateAMemo(memo: Memo){
-        memoDao.updateMemo(memo)
-    }
-
-    suspend fun deleteAMemo(memo: Memo){
-        memoDao.deleteMemo(memo)
+    suspend fun insert(memo: Memo) {
+        memoDao.insertMemo(memo)
     }
 }
 
-
-*/
