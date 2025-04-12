@@ -1,8 +1,9 @@
 package eu.tutorials.jeommechu.calendar_memo_db
-
+/*
 import android.content.Context
 import androidx.room.Room
-/*
+
+
 
 object Graph {
     lateinit var database: MemoDatabase

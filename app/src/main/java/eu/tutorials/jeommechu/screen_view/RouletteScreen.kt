@@ -1,5 +1,7 @@
 package eu.tutorials.jeommechu.screen_view
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.VectorConverter
@@ -41,6 +43,7 @@ import eu.tutorials.jeommechu.viewmodel.MainViewModel
 import kotlinx.coroutines.delay
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RouletteScreen(
     navController: NavController,

@@ -1,29 +1,25 @@
 package eu.tutorials.jeommechu.calendar_memo_db
 
 import kotlinx.coroutines.flow.Flow
-import java.time.LocalDate
-import java.util.Date
+
 /*
 
 class MemoRepository(private val memoDao: MemoDao) {
 
-    suspend fun addAMemo(memoEntity: MemoEntity){
-        memoDao.addMemo(memoEntity)
+    suspend fun addMemo(memo: Memo){
+        memoDao.addMemo(memo)
     }
 
-    fun getMemo() : Flow<List<MemoEntity>> = memoDao.getAllMemos()
+    fun getAllMemos() : Flow<List<Memo>> = memoDao.getAllMemos()
 
-    fun getAWishByDate(date: String) : Flow<MemoEntity?> {
-        return memoDao.getMemoByDate(date)
+    suspend fun updateAMemo(memo: Memo){
+        memoDao.updateMemo(memo)
     }
 
-    suspend fun updateAMemo(memoEntity: MemoEntity){
-        memoDao.updateAMemo(memoEntity)
-    }
-
-    suspend fun deleteAMemo(memoEntity: MemoEntity){
-        memoDao.deleteAMemo(memoEntity)
+    suspend fun deleteAMemo(memo: Memo){
+        memoDao.deleteMemo(memo)
     }
 }
+
 
 */

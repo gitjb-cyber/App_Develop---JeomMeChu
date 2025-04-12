@@ -1,6 +1,8 @@
 package eu.tutorials.jeommechu.screen_view
 
 import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,6 +37,7 @@ import eu.tutorials.jeommechu.view.FoodCard
 import eu.tutorials.jeommechu.view.StatusBarView
 import eu.tutorials.jeommechu.viewmodel.MainViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("ResourceAsColor")
 @Composable
 fun RecommendationScreen(

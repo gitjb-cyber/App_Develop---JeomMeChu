@@ -1,4 +1,5 @@
-package eu.tutorials.jeommechu.screen_view.CalendarMemo
+package eu.tutorials.jeommechu.screen_view.calendarMemo
+
 
 import android.os.Build
 import android.widget.CalendarView
@@ -16,8 +17,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Divider
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
@@ -43,7 +42,7 @@ import androidx.navigation.NavController
 import eu.tutorials.jeommechu.data.FoodsData
 import java.time.LocalDate
 
-/* 위시리스트 앱의 홈뷰와 비교하며 수정*/
+
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,9 +55,7 @@ fun CalendarMemoScreen(navController: NavController) {
     var currentMemo by remember { mutableStateOf("") }
 
     // 음식 제목과 마지막 태그를 포함한 추천 리스트
-    val suggestions = FoodsData.foodsList.map { food ->
-        "${food.title} (${food.tags.lastOrNull()?.title ?: ""})"
-    }
+    val suggestions = FoodsData.foodsList.map { food -> food.title }
 
     Scaffold(
         topBar = {
@@ -129,6 +126,8 @@ fun CalendarMemoScreen(navController: NavController) {
 }
 
 
+
+
 @Composable
 fun AutoCompleteTextField(
     suggestions: List<String>,
@@ -156,7 +155,7 @@ fun AutoCompleteTextField(
                 query = it
                 onTextChange(it)
             },
-            label = { Text("무엇을 드셨나요?") },
+            label = { Text("메모") },
             modifier = Modifier.fillMaxWidth()
         )
 

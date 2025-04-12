@@ -2,6 +2,8 @@ package eu.tutorials.jeommechu.screen_view
 
 
 import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -33,6 +35,7 @@ import eu.tutorials.jeommechu.view.AppBarView
 import eu.tutorials.jeommechu.view.StatusBarView
 import eu.tutorials.jeommechu.viewmodel.MainViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("ResourceAsColor")
 @Composable
 fun SelectionScreen(

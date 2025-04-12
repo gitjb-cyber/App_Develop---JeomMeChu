@@ -1,4 +1,5 @@
 package eu.tutorials.jeommechu.calendar_memo_db
+/*
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -7,24 +8,20 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
+
 // 메모 DAO
-/*
 @Dao
 abstract class MemoDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE) // Create
-    abstract fun addMemo(memo: MemoEntity) // 메모 추가/수정
+    @Insert(onConflict = OnConflictStrategy.REPLACE) // Create
+    abstract fun addMemo(memoEntity: Memo) // 메모 추가/수정
 
-    @Query("SELECT * FROM 'memo-table'") // Read
-    abstract fun getAllMemos(): Flow<List<MemoEntity>>
+    @Query("SELECT * FROM 'memo-table' ORDER BY date ASC") // Read (날짜 순차적으로 정렬)
+    abstract fun getAllMemos(): Flow<List<Memo>>
 
     @Update // Update
-    abstract fun updateAMemo(memo: MemoEntity)
+    abstract fun updateMemo(memo: Memo)
 
     @Delete // Delete
-    abstract fun deleteAMemo(memo: MemoEntity)
-
-    @Query("SELECT * FROM 'memo-table' WHERE date = :date")
-    abstract fun getMemoByDate(date: String): Flow<MemoEntity?>
+    abstract fun deleteMemo(memo: Memo)
 }
-
 */
