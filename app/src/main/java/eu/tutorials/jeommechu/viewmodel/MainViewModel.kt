@@ -8,7 +8,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import eu.tutorials.jeommechu.calendar_memo_db.Memo
 import eu.tutorials.jeommechu.calendar_memo_db.MemoDatabase
