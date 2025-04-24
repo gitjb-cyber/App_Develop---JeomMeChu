@@ -5,8 +5,8 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
@@ -27,7 +27,7 @@ fun AppBarView(
         navigationIcon = {
             IconButton(onClick = { onBackNavClicked() }) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                    imageVector = Icons.Default.KeyboardArrowLeft,
                     tint = iconColor,
                     contentDescription = "뒤로가기"
                 )

@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -19,6 +21,9 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        resValue("string", "KAKAO_NATIVE_APP_KEY", getApiKey("KAKAO_NATIVE_APP_KEY"))
+        buildConfigField("String", "KAKAO_REST_API_KEY", getApiKey("KAKAO_REST_API_KEY"))
     }
 
     buildTypes {
@@ -39,9 +44,10 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.4"
     }
     packaging {
         resources {
@@ -50,22 +56,35 @@ android {
     }
 }
 
+fun getApiKey(key: String): String = gradleLocalProperties(rootDir).getProperty(key)
+
 dependencies {
+
+    // 카카오맵 api 사용
+    implementation("com.kakao.maps.open:android:2.12.8")
 
     // 상단바 조작
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.31.1-alpha")
 
-    implementation("androidx.coordinatorlayout:coordinatorlayout:1.2.0")
-
-    val compose_version = "1.6.0-alpha08"
-    val room = "2.6.1"
+    implementation("androidx.coordinatorlayout:coordinatorlayout:1.3.0")
+    implementation("com.google.android.gms:play-services-location:21.3.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
     // Gson (JSON 변환을 위해 필요)
     implementation("com.google.code.gson:gson:2.10.1")
 
+    // Retrofit & Gson
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // Coroutines 의존성 추가
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
     // Jetpack Compose Navigation (네비게이션 상태 관리)
     implementation("androidx.navigation:navigation-compose:2.8.6")
 
+    val compose_version = "1.5.4"
+    val room = "2.6.1"
     // Room
     implementation("androidx.room:room-runtime:$room")
     implementation("androidx.room:room-ktx:$room")
@@ -83,9 +102,10 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
     implementation("androidx.activity:activity-compose:1.10.0")
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
+    // 이미 compose-bom 으로 통합
+    // implementation("androidx.compose.ui:ui")
+    // implementation("androidx.compose.ui:ui-graphics")
+    // implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.navigation:navigation-runtime-ktx:2.8.6")
     testImplementation("junit:junit:4.13.2")

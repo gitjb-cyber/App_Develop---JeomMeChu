@@ -3,7 +3,6 @@ package eu.tutorials.jeommechu.screen_view
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,16 +23,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import eu.tutorials.jeommechu.R
 import eu.tutorials.jeommechu.view.AppBarView
-import eu.tutorials.jeommechu.view.FoodCard
+import eu.tutorials.jeommechu.view.FoodCardColumn
 import eu.tutorials.jeommechu.view.StatusBarView
 import eu.tutorials.jeommechu.viewmodel.MainViewModel
 
@@ -124,9 +121,10 @@ fun RecommendationScreen(
                 }
                 Spacer(modifier = Modifier.height(16.dp))
 
-                FoodCard(
+                FoodCardColumn(
                     matchingConditions = matchingConditions,
-                    toggleConditions = toggleConditions
+                    toggleConditions = toggleConditions,
+                    navController = navController
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }

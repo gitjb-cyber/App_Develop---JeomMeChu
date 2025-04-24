@@ -34,12 +34,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import eu.tutorials.jeommechu.R
 
 @Composable
-fun FoodCard(
+fun FoodCardColumn(
     matchingConditions: Set<String>,
-    toggleConditions: Map<String, List<String>>
+    toggleConditions: Map<String, List<String>>,
+    navController: NavController
 ) {
     val grouped: Map<String, List<String>> = matchingConditions.groupBy { conditionKey ->
         toggleConditions[conditionKey]?.getOrNull(4) ?: "기타"
@@ -77,6 +79,7 @@ fun FoodCard(
                             .size(200.dp),
                     ) {
                         Box(modifier = Modifier.fillMaxSize()) {
+
                             // 메뉴 버튼 (점 세 개)
                             IconButton(
                                 onClick = { menuExpanded = true },
@@ -94,7 +97,7 @@ fun FoodCard(
                             ) {
                                 DropdownMenuItem(onClick = {
                                     menuExpanded = false
-                                    // TODO: 주변 맛집 찾기 기능
+                                    navController.navigate("map_screen/$conditionKey")
                                 }) {
                                     Text("📍 주변 맛집 찾기")
                                 }

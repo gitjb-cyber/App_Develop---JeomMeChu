@@ -1,4 +1,4 @@
-package eu.tutorials.jeommechu.screen_view.calendarMemo
+package eu.tutorials.jeommechu.screen_view
 
 
 import android.os.Build
@@ -19,7 +19,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Divider
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -72,7 +72,7 @@ fun CalendarMemoScreen(
                 navigationIcon = {
                     androidx.compose.material.IconButton(onClick = { navController.navigateUp() }) {
                         androidx.compose.material.Icon(
-                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                            imageVector = Icons.Default.KeyboardArrowLeft,
                             tint = iconColor,
                             contentDescription = "뒤로가기"
                         )

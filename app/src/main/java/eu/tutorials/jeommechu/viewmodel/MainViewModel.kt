@@ -9,14 +9,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.location.LocationServices
+import eu.tutorials.jeommechu.BuildConfig
 import eu.tutorials.jeommechu.calendar_memo_db.Memo
 import eu.tutorials.jeommechu.calendar_memo_db.MemoDatabase
 import eu.tutorials.jeommechu.calendar_memo_db.MemoRepository
 import eu.tutorials.jeommechu.data.FoodsData
+import eu.tutorials.jeommechu.kakaoMap.KakaoRepository
+import eu.tutorials.jeommechu.kakaoMap.PlaceDocument
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 @RequiresApi(Build.VERSION_CODES.O)
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -33,9 +39,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val buttonStates: State<Map<String, Boolean>> = _buttonStates
 
     // 랜덤 메뉴 돌리기 전 나오는 기본 텍스트
-    var selectedCondition by mutableStateOf("❓")
-        private set
+    private var selectedCondition by mutableStateOf("❓")
 
+    // 메모 Database 저장 변수
     private val memoDao = MemoDatabase.getDatabase(application).memoDao()
     private val repository = MemoRepository(memoDao)
 
@@ -69,7 +75,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // --- 모두 일치 조건 (모든 선택 버튼이 포함) --- //
-    fun getMatchingConditions(): Set<String> {
+    private fun getMatchingConditions(): Set<String> {
         val selectedButtons = _buttonStates.value.filterValues { it }.keys
         if (selectedButtons.isEmpty()) return emptySet()
         return FoodsData.foodsList.filter { food ->
@@ -86,7 +92,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // --- 하나라도 일치 조건 (선택한 버튼 중 하나라도 포함) --- //
-    fun getAnyMatchingConditions(): Set<String> {
+    private fun getAnyMatchingConditions(): Set<String> {
         val selectedButtons = _buttonStates.value.filterValues { it }.keys
         if (selectedButtons.isEmpty()) return emptySet()
         return FoodsData.foodsList.filter { food ->
@@ -96,14 +102,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }.map { it.title }.toSet()
     }
 
-    fun updateAnyMatchingConditions() {
+    private fun updateAnyMatchingConditions() {
         val newMatchingConditions = getAnyMatchingConditions()
         _matchingConditions.value = newMatchingConditions
         _toggleConditions.value = getMatchingConditionsMap(newMatchingConditions)
     }
 
     // 주어진 음식 제목들에 대해, 해당 음식의 태그 목록을 매핑하여 반환
-    fun getMatchingConditionsMap(conditions: Set<String>): Map<String, List<String>> {
+    private fun getMatchingConditionsMap(conditions: Set<String>): Map<String, List<String>> {
         return FoodsData.foodsList.filter { it.title in conditions }
             .associate { it.title to it.tags.map { tag -> tag.title } }
     }
@@ -115,4 +121,36 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+
+    // 카카오 맵
+    private val kakaoRepository = KakaoRepository(BuildConfig.KAKAO_REST_API_KEY)
+    private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(application)
+
+    private val _places = MutableStateFlow<List<PlaceDocument>>(emptyList())
+    val places: StateFlow<List<PlaceDocument>> = _places
+
+    private val _error = MutableStateFlow<String?>(null)
+    val error: StateFlow<String?> = _error
+
+    fun searchNearbyPlaces(conditionKey: String) {
+        viewModelScope.launch {
+            try {
+                val location = fusedLocationClient
+                    .getCurrentLocation(
+                        com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY,
+                        null
+                    )
+                    .await()
+
+                val x = location.longitude
+                val y = location.latitude
+                val results = kakaoRepository.searchNearbyPlaces(conditionKey, x, y)
+                _places.value = results
+            } catch (e: SecurityException) {
+                _error.value = "위치 권한이 필요합니다."
+            } catch (e: Exception) {
+                _error.value = "장소 검색 중 오류 발생"
+            }
+        }
+    }
 }
