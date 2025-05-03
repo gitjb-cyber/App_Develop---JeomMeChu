@@ -5,7 +5,7 @@ data class KakaoSearchResponse(
 )
 
 data class PlaceDocument(
-    val place_name: String,
-    val address_name: String,
+    val placeName: String,
+    val addressName: String,
     val distance: String
 )

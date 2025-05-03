@@ -1,6 +1,8 @@
 package eu.tutorials.jeommechu.viewmodel
 
 import android.app.Application
+import android.content.Context
+import android.location.Location
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.State
@@ -10,19 +12,24 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.location.LocationServices
-import eu.tutorials.jeommechu.BuildConfig
+import com.google.android.gms.location.Priority
 import eu.tutorials.jeommechu.calendar_memo_db.Memo
 import eu.tutorials.jeommechu.calendar_memo_db.MemoDatabase
 import eu.tutorials.jeommechu.calendar_memo_db.MemoRepository
 import eu.tutorials.jeommechu.data.FoodsData
 import eu.tutorials.jeommechu.kakaoMap.KakaoRepository
 import eu.tutorials.jeommechu.kakaoMap.PlaceDocument
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -37,6 +44,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     // 각 버튼(옵션)의 선택 상태를 저장하는 상태 변수
     private val _buttonStates = mutableStateOf(mutableMapOf<String, Boolean>())
     val buttonStates: State<Map<String, Boolean>> = _buttonStates
+
+    // 제외할 음식 상태 저장하는 상태 변수
+    private val _excludedFoods = mutableStateOf(setOf<String>())
+    val excludedFoods: State<Set<String>> = _excludedFoods
+
+    // 슬라이더에 사용할 상태 변수
+    private val _sliderDaysAgo = mutableStateOf(0)
+    val sliderDaysAgo: State<Int> = _sliderDaysAgo
+
 
     // 랜덤 메뉴 돌리기 전 나오는 기본 텍스트
     private var selectedCondition by mutableStateOf("❓")
@@ -74,17 +90,55 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun setSliderDaysAgo(days: Int) {
+        _sliderDaysAgo.value = days
+        updateExcludedFoods(days)
+    }
+
+    // memo에 저장된 음식 중 최근 n일간의 음식 제외
+    fun updateExcludedFoods(daysAgo: Int) {
+        viewModelScope.launch {
+            if (daysAgo == 0) {
+                _excludedFoods.value = emptySet()
+            } else {
+                val today = LocalDate.now()
+                val targetDates = (1..daysAgo).map { today.minusDays(it.toLong()).toString() }
+
+                val memos = repository.allMemos.first()
+                val excluded = memos
+                    .filter { it.date in targetDates }
+                    .flatMap { it.memo.split(",", " ") }
+                    .map { it.trim() }
+                    .filter { it.isNotBlank() }
+                    .toSet()
+
+                _excludedFoods.value = excluded
+            }
+            // 조건 다시 계산
+            if (selectedMode.value == "모두 일치") {
+                updateMatchingConditions()
+            } else {
+                updateAnyMatchingConditions()
+            }
+        }
+    }
+
     // --- 모두 일치 조건 (모든 선택 버튼이 포함) --- //
     private fun getMatchingConditions(): Set<String> {
         val selectedButtons = _buttonStates.value.filterValues { it }.keys
         if (selectedButtons.isEmpty()) return emptySet()
-        return FoodsData.foodsList.filter { food ->
-            selectedButtons.all { option ->
-                option in food.tags.map { it.title }
+        val allMatching = FoodsData.foodsList
+            .filter { food ->
+                selectedButtons.all { option ->
+                    option in food.tags.map { it.title }
+                }
             }
-        }.map { it.title }.toSet()
+            .map { it.title }
+            .toSet()
+        return allMatching - _excludedFoods.value
     }
 
+    // 카테고리에서 일치 조건을 충족시킨 음식 모음(교집합)
     fun updateMatchingConditions() {
         val newMatchingConditions = getMatchingConditions()
         _matchingConditions.value = newMatchingConditions
@@ -95,13 +149,18 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private fun getAnyMatchingConditions(): Set<String> {
         val selectedButtons = _buttonStates.value.filterValues { it }.keys
         if (selectedButtons.isEmpty()) return emptySet()
-        return FoodsData.foodsList.filter { food ->
-            selectedButtons.any { option ->
-                option in food.tags.map { it.title }
+        val allMatchingAny = FoodsData.foodsList
+            .filter { food ->
+                selectedButtons.any { option ->
+                    option in food.tags.map { it.title }
+                }
             }
-        }.map { it.title }.toSet()
+            .map { it.title }
+            .toSet()
+        return allMatchingAny - _excludedFoods.value
     }
 
+    // 카테고리에서 일치 조건을 충족시킨 음식 모음(합집합)
     private fun updateAnyMatchingConditions() {
         val newMatchingConditions = getAnyMatchingConditions()
         _matchingConditions.value = newMatchingConditions
@@ -115,6 +174,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
 
+    // 날짜 - 음식 메모 저장
     fun insertMemo(date: String, memoText: String) {
         viewModelScope.launch {
             repository.insert(Memo(date, memoText))
@@ -123,8 +183,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
 
     // 카카오 맵
-    private val kakaoRepository = KakaoRepository(BuildConfig.KAKAO_REST_API_KEY)
-    private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(application)
+    private val _location = mutableStateOf<Location?>(null)
+    val location: State<Location?> = _location
+
+    private var locationJob: Job? = null
+
+    fun updateLocation(newLocation: Location?) {
+        _location.value = newLocation
+    }
+
+    private val kakaoRepository = KakaoRepository()
 
     private val _places = MutableStateFlow<List<PlaceDocument>>(emptyList())
     val places: StateFlow<List<PlaceDocument>> = _places
@@ -134,23 +202,55 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun searchNearbyPlaces(conditionKey: String) {
         viewModelScope.launch {
-            try {
-                val location = fusedLocationClient
-                    .getCurrentLocation(
-                        com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY,
-                        null
-                    )
-                    .await()
+            val current = _location.value
+            if (current == null) {
+                _error.value = "위치를 가져올 수 없습니다."
+                return@launch
+            }
 
-                val x = location.longitude
-                val y = location.latitude
+            try {
+                val x = current.longitude
+                val y = current.latitude
                 val results = kakaoRepository.searchNearbyPlaces(conditionKey, x, y)
                 _places.value = results
-            } catch (e: SecurityException) {
-                _error.value = "위치 권한이 필요합니다."
+                _error.value = null // 성공 시 에러 초기화
             } catch (e: Exception) {
                 _error.value = "장소 검색 중 오류 발생"
             }
         }
     }
+
+    fun startLocationUpdates(context: Context, conditionKey: String) {
+        stopLocationUpdates() // 기존 작업 중지
+
+        val fusedClient = LocationServices.getFusedLocationProviderClient(context)
+
+        locationJob = viewModelScope.launch {
+            while (isActive) {
+                try {
+                    val location = fusedClient
+                        .getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+                        .await()
+                    updateLocation(location)
+                    searchNearbyPlaces(conditionKey)
+                } catch (e: SecurityException) {
+                    _error.value = "위치 권한이 필요합니다."
+                    updateLocation(null)
+                } catch (e: Exception) {
+                    _error.value = "위치 갱신 실패: ${e.message}"
+                }
+                delay(10_000) // 10초마다 위치 재요청
+            }
+        }
+    }
+
+    fun stopLocationUpdates() {
+        locationJob?.cancel()
+        locationJob = null
+    }
+
+    fun setError(message: String) {
+        _error.value = message
+    }
+
 }

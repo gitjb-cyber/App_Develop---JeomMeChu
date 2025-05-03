@@ -1,45 +1,170 @@
 package eu.tutorials.jeommechu.screen_view
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import eu.tutorials.jeommechu.viewmodel.MainViewModel
+import kotlinx.coroutines.tasks.await
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("MissingPermission")
 @Composable
 fun UserMapScreen(
-    conditionKey: String,
+    conditionKey: String, // 검색 키워드
     mainViewModel: MainViewModel
 ) {
-    val places by mainViewModel.places.collectAsState()
-    val error by mainViewModel.error.collectAsState()
+    val context = LocalContext.current // 현재 context (위치 요청 등에 필요)
+    val locationState = mainViewModel.location // 현재 위치 상태
+    val places by mainViewModel.places.collectAsState() // 검색된 장소 목록
+    val error by mainViewModel.error.collectAsState() // 오류 메시지
 
-    LaunchedEffect(conditionKey) {
-        mainViewModel.searchNearbyPlaces(conditionKey)
+    val url = "https://map.kakao.com/?q=$conditionKey"
+
+
+    val webViewRef = remember { mutableStateOf<WebView?>(null) }
+
+    // 위치 권한 요청 런처 추가
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions(),
+        onResult = { permissions ->
+            val fine = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
+            val coarse = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
+
+            if (!fine && !coarse) {
+                mainViewModel.setError("위치 권한이 필요합니다.")
+            }
+        }
+    )
+
+    // 최초 진입 시 위치 권한 요청
+    LaunchedEffect(Unit) {
+        val fineGranted = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        val coarseGranted = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+
+        if (!fineGranted || !coarseGranted) {
+            permissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
     }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text(text = "주변 장소 ($conditionKey)", style = MaterialTheme.typography.h3)
+    // 위치 요청 및 장소 검색
+    LaunchedEffect(conditionKey) {
+        val fusedClient = LocationServices.getFusedLocationProviderClient(context)
+        try {
+            val location = fusedClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null).await()
+            mainViewModel.updateLocation(location)
+            mainViewModel.searchNearbyPlaces(conditionKey)
+            mainViewModel.startLocationUpdates(context, conditionKey)
+        } catch (e: SecurityException) {
+            mainViewModel.updateLocation(null)
+            mainViewModel.setError("위치 권한이 필요합니다.")
+        }
+    }
 
-        if (error != null) {
-            Text(text = error ?: "", color = MaterialTheme.colors.error)
+    DisposableEffect(Unit) {
+        onDispose {
+            mainViewModel.stopLocationUpdates()
+        }
+    }
+    Column(modifier = Modifier.fillMaxSize()) {
+        // WebView
+        AndroidView(factory = {
+            WebView(it).apply {
+                webViewClient = object : WebViewClient() {
+                    override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+                        url?.let {
+                            if (url.startsWith("intent://")) {
+                                try {
+                                    val intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME)
+                                    if (intent != null) {
+                                        context.startActivity(intent)
+                                        return true
+                                    }
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                                return true
+                            }
+                        }
+                        return false // 나머지는 WebView가 직접 처리
+                    }
+                }
+                settings.javaScriptEnabled = true
+                loadUrl("https://map.kakao.com/?q=$conditionKey")
+            }
+        })
+
+        // 에러 메시지
+        error?.let {
+            Text(
+                text = "⚠ $it",
+                color = Color.Red,
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
         }
 
-        if (places.isEmpty()) {
-            Text(text = "결과가 없습니다.")
-        } else {
-            places.forEach { place ->
-                Card(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-                    Column(modifier = Modifier.padding(8.dp)) {
-                        Text(place.place_name, style = MaterialTheme.typography.body1)
-                        Text(place.address_name, style = MaterialTheme.typography.body2)
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = "📍 주변 추천 리스트 (거리순)",
+            style = MaterialTheme.typography.h6,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+        ) {
+            items(places) { place ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp)
+                        .clickable {
+                            webViewRef.value?.loadUrl("https://map.kakao.com/link/search/${place.placeName}")
+                        }
+                ) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Text(text = "• ${place.placeName}", style = MaterialTheme.typography.body1)
+                        Text(
+                            text = "${place.distance}m 거리",
+                            style = MaterialTheme.typography.body2,
+                            color = Color.Gray
+                        )
                     }
                 }
             }

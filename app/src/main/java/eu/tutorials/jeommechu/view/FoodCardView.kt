@@ -97,7 +97,7 @@ fun FoodCardColumn(
                             ) {
                                 DropdownMenuItem(onClick = {
                                     menuExpanded = false
-                                    navController.navigate("map_screen/$conditionKey")
+                                    navController.navigate("userMap/$conditionKey")
                                 }) {
                                     Text("📍 주변 맛집 찾기")
                                 }

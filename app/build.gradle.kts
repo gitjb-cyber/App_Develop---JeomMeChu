@@ -62,6 +62,8 @@ dependencies {
 
     // 카카오맵 api 사용
     implementation("com.kakao.maps.open:android:2.12.8")
+    // 카카오맵 SDK
+    // implementation("net.daum.android:map:1.4.0")
 
     // 상단바 조작
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.31.1-alpha")
@@ -82,6 +84,7 @@ dependencies {
 
     // Jetpack Compose Navigation (네비게이션 상태 관리)
     implementation("androidx.navigation:navigation-compose:2.8.6")
+    implementation("com.google.android.gms:play-services-maps:19.2.0")
 
     val compose_version = "1.5.4"
     val room = "2.6.1"
@@ -102,10 +105,9 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
     implementation("androidx.activity:activity-compose:1.10.0")
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
-    // 이미 compose-bom 으로 통합
-    // implementation("androidx.compose.ui:ui")
-    // implementation("androidx.compose.ui:ui-graphics")
-    // implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.navigation:navigation-runtime-ktx:2.8.6")
     testImplementation("junit:junit:4.13.2")

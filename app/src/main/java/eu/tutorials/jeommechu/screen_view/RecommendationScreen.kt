@@ -18,6 +18,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -44,7 +45,7 @@ fun RecommendationScreen(
     StatusBarView()
     val matchingConditions by mainViewModel.matchingConditions
     val toggleConditions by mainViewModel.toggleConditions
-
+    val sliderValue by mainViewModel.sliderDaysAgo
 
     Scaffold(
         // AppBarView 의 topBar 내부
@@ -62,6 +63,23 @@ fun RecommendationScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
+            item {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "최근 ${sliderValue}일간 먹은 음식 제외",
+                        fontFamily = FontFamily(Font(R.font.jua_regular)),
+                        fontSize = 18.sp
+                    )
+                    Slider(
+                        value = sliderValue.toFloat(),
+                        onValueChange = { mainViewModel.setSliderDaysAgo(it.toInt()) },
+                        valueRange = 0f..7f,
+                        steps = 6,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
