@@ -10,13 +10,27 @@ import android.webkit.WebViewClient
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -31,18 +45,15 @@ import kotlinx.coroutines.tasks.await
 
 
 @RequiresApi(Build.VERSION_CODES.O)
-@SuppressLint("MissingPermission")
+@SuppressLint("MissingPermission", "SetJavaScriptEnabled")
 @Composable
 fun UserMapScreen(
     conditionKey: String, // 검색 키워드
     mainViewModel: MainViewModel
 ) {
     val context = LocalContext.current // 현재 context (위치 요청 등에 필요)
-    val locationState = mainViewModel.location // 현재 위치 상태
     val places by mainViewModel.places.collectAsState() // 검색된 장소 목록
     val error by mainViewModel.error.collectAsState() // 오류 메시지
-
-    val url = "https://map.kakao.com/?q=$conditionKey"
 
 
     val webViewRef = remember { mutableStateOf<WebView?>(null) }
@@ -99,6 +110,7 @@ fun UserMapScreen(
         AndroidView(factory = {
             WebView(it).apply {
                 webViewClient = object : WebViewClient() {
+                    @Deprecated("Deprecated in Java")
                     override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                         url?.let {
                             if (url.startsWith("intent://")) {
@@ -127,8 +139,11 @@ fun UserMapScreen(
             Text(
                 text = "⚠ $it",
                 color = Color.Red,
+                style = MaterialTheme.typography.body2,
                 modifier = Modifier
                     .padding(16.dp)
+                    .background(Color(0xFFFFE0E0), shape = RoundedCornerShape(8.dp))
+                    .padding(12.dp)
                     .fillMaxWidth(),
                 textAlign = TextAlign.Center
             )

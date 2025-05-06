@@ -2,6 +2,7 @@ package eu.tutorials.jeommechu.screen_view
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,20 +13,25 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -46,6 +52,16 @@ fun RecommendationScreen(
     val matchingConditions by mainViewModel.matchingConditions
     val toggleConditions by mainViewModel.toggleConditions
     val sliderValue by mainViewModel.sliderDaysAgo
+
+    val context = LocalContext.current
+
+    // 조건 재확인 로직: 모두 일치가 비어있을 경우 자동 전환
+    LaunchedEffect(matchingConditions, mainViewModel.selectedMode.value) {
+        if (mainViewModel.selectedMode.value == "모두 일치" && matchingConditions.isEmpty()) {
+            mainViewModel.setSelectedMode("하나라도 일치")
+            Toast.makeText(context, "중복될 수 없는 항목이 선택되어 하나만 포함되더라도 불러옵니다.", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Scaffold(
         // AppBarView 의 topBar 내부
@@ -82,38 +98,39 @@ fun RecommendationScreen(
 
             item {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly,
                 ) {
-                    Spacer(modifier = Modifier.height(32.dp))
-                    // "모두 일치" 버튼
                     Button(
                         onClick = { mainViewModel.setSelectedMode("모두 일치") },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = if (mainViewModel.selectedMode.value == "모두 일치")
-                                MaterialTheme.colorScheme.primary else Color(R.color.light_gray)
+                                MaterialTheme.colorScheme.primary else Color(0xFFE0E0E0)
                         ),
-                        modifier = Modifier.padding(horizontal = 16.dp)
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.weight(1f).padding(horizontal = 8.dp)
                     ) {
-                        Text("모든 조건 일치",
-                            fontFamily = FontFamily(Font(R.font.jua_regular)))
+                        Text("모든 조건 일치", fontFamily = FontFamily(Font(R.font.jua_regular)))
                     }
 
                     Button(
                         onClick = { mainViewModel.setSelectedMode("하나라도 일치") },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = if (mainViewModel.selectedMode.value == "하나라도 일치")
-                                MaterialTheme.colorScheme.primary else Color(R.color.light_gray)
+                                MaterialTheme.colorScheme.primary else Color(0xFFE0E0E0)
                         ),
-                        modifier = Modifier.padding(horizontal = 16.dp)
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.weight(1f).padding(horizontal = 8.dp)
                     ) {
-                        Text("하나라도 일치",
-                            fontFamily = FontFamily(Font(R.font.jua_regular)))
+                        Text("하나라도 일치", fontFamily = FontFamily(Font(R.font.jua_regular)))
                     }
                 }
             }
+
             item {
-                Card(
+                /*Card(
                     modifier = Modifier.padding(16.dp),
                     colors = CardDefaults.cardColors(containerColor = Color.White) // 배경색 흰색 적용
                 ) {
@@ -136,16 +153,19 @@ fun RecommendationScreen(
                             color = Color.Black
                         )
                     }
-                }
+                }*/
+
                 Spacer(modifier = Modifier.height(16.dp))
 
                 FoodCardColumn(
                     matchingConditions = matchingConditions,
                     toggleConditions = toggleConditions,
-                    navController = navController
+                    navController = navController,
+                    mainViewModel = mainViewModel
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
+
 
             item {
                 Card(
@@ -177,14 +197,24 @@ fun RecommendationScreen(
                     onClick = {
                         navController.navigate(ScreenRoute.RouletteScreen.route)
                     },
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(horizontal = 64.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 32.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorScheme.primary,
+                        contentColor = colorScheme.onPrimary
+                    )
                 ) {
-                    Text("랜덤 선택",
-                        fontSize = 24.sp,
+                    Text(
+                        "랜덤 선택",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
                         fontFamily = FontFamily(Font(R.font.jua_regular))
                     )
                 }
+                Spacer(modifier = Modifier.height(32.dp))
             }
         }
     }

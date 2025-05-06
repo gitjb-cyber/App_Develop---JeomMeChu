@@ -2,6 +2,7 @@ package eu.tutorials.jeommechu.calendar_memo_db
 
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -15,4 +16,7 @@ interface MemoDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMemo(memo: Memo)
+
+    @Delete
+    suspend fun deleteMemo(memo: Memo)
 }

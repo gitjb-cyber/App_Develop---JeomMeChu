@@ -1,5 +1,7 @@
 package eu.tutorials.jeommechu.view
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,15 +38,19 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import eu.tutorials.jeommechu.R
+import eu.tutorials.jeommechu.viewmodel.MainViewModel
+import java.time.LocalDate
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FoodCardColumn(
     matchingConditions: Set<String>,
     toggleConditions: Map<String, List<String>>,
-    navController: NavController
+    navController: NavController,
+    mainViewModel: MainViewModel
 ) {
     val grouped: Map<String, List<String>> = matchingConditions.groupBy { conditionKey ->
-        toggleConditions[conditionKey]?.getOrNull(4) ?: "기타"
+        toggleConditions[conditionKey]?.getOrNull(0) ?: "기타"
     }
 
     // 각 그룹별로 제목과 LazyRow를 표시
@@ -103,13 +109,8 @@ fun FoodCardColumn(
                                 }
                                 DropdownMenuItem(onClick = {
                                     menuExpanded = false
-                                    // TODO: 랜덤 룰렛 추가
-                                }) {
-                                    Text("🎲 랜덤 룰렛 추가")
-                                }
-                                DropdownMenuItem(onClick = {
-                                    menuExpanded = false
-                                    // TODO: 오늘 먹을 음식으로 추가
+                                    val today = LocalDate.now().toString()
+                                    mainViewModel.insertMemo(today, conditionKey)
                                 }) {
                                     Text("🍽 오늘 먹을 음식으로 추가")
                                 }
@@ -127,22 +128,12 @@ fun FoodCardColumn(
                                     style = MaterialTheme.typography.h6,
                                     fontFamily = FontFamily(Font(R.font.jua_regular))
                                 )
-                                Spacer(modifier = Modifier.height(8.dp))
+                                Spacer(modifier = Modifier.height(16.dp))
 
-                                val firstFourCount = minOf(4, values.size)
-                                for (i in 0 until firstFourCount) {
+                                val subValues = values.drop(1)
+                                subValues.forEach { tag ->
                                     Text(
-                                        text = values[i],
-                                        style = MaterialTheme.typography.body2,
-                                        fontFamily = FontFamily(Font(R.font.jua_regular))
-                                    )
-                                }
-
-                                if (values.size > 5) {
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    val remaining = values.subList(5, values.size).joinToString(" ")
-                                    Text(
-                                        text = remaining,
+                                        text = tag,
                                         style = MaterialTheme.typography.body2,
                                         fontFamily = FontFamily(Font(R.font.jua_regular))
                                     )

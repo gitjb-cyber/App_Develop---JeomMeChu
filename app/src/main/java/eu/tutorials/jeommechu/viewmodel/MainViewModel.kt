@@ -78,6 +78,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    // 전체 선택 -> 다른 버튼의 상태를 강제 설정하는 함수
+    fun setButtonState(button: String, isChecked: Boolean) {
+        _buttonStates.value = _buttonStates.value.toMutableMap().apply {
+            this[button] = isChecked
+        }
+    }
+
+    // RecommendationScreen 에서 보여주는 기본 값
     var selectedMode = mutableStateOf("모두 일치")
         private set
 
@@ -174,12 +182,20 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
 
-    // 날짜 - 음식 메모 저장
+    // 날짜 - 음식 메모 DB 저장
     fun insertMemo(date: String, memoText: String) {
         viewModelScope.launch {
             repository.insert(Memo(date, memoText))
         }
     }
+
+    // 저장된 메모 DB 삭제
+    fun deleteMemo(memo: Memo) {
+        viewModelScope.launch {
+            repository.delete(memo)
+        }
+    }
+
 
 
     // 카카오 맵

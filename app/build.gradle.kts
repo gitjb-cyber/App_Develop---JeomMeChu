@@ -62,8 +62,8 @@ dependencies {
 
     // 카카오맵 api 사용
     implementation("com.kakao.maps.open:android:2.12.8")
-    // 카카오맵 SDK
-    // implementation("net.daum.android:map:1.4.0")
+    // 카카오맵 SDK 의존성 추가
+    // implementation("com.kakao.maps.openapi:map:2.6.0")
 
     // 상단바 조작
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.31.1-alpha")
