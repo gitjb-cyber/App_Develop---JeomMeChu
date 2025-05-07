@@ -116,7 +116,6 @@ object FoodsData {
         food("김치전", Tags.Korean, Tags.Etc, Tags.SoupNo, Tags.Hot, Tags.Spicy, Tags.Seafood),
         food("파전", Tags.Korean, Tags.Etc, Tags.SoupNo, Tags.Hot, Tags.Mild, Tags.Vegan),
         food("해물파전", Tags.Korean, Tags.Etc, Tags.SoupNo, Tags.Hot, Tags.Mild, Tags.Seafood),
-        food("김치전", Tags.Korean, Tags.Etc, Tags.SoupNo, Tags.Hot, Tags.Spicy, Tags.Seafood),
 
         // 일식
         food("초밥", Tags.Japanese, Tags.Rice, Tags.SoupNo, Tags.Cold, Tags.Mild, Tags.Fish),
