@@ -1,11 +1,18 @@
 package eu.tutorials.jeommechu.kakaoMap
 
+import com.google.gson.annotations.SerializedName
+
 data class KakaoSearchResponse(
-    val documents: List<PlaceDocument>
+    @SerializedName("documents") val documents: List<PlaceDocument>
 )
 
 data class PlaceDocument(
-    val placeName: String,
-    val addressName: String,
-    val distance: String
+    @SerializedName("place_name") val placeName: String,
+    @SerializedName("distance") val distance: String,
+    @SerializedName("address_name") val addressName: String,
+    @SerializedName("road_address_name") val roadAddressName: String?, // 도로명 주소
+    // 좌표
+    @SerializedName("x") val longitude: String,
+    @SerializedName("y") val latitude: String
+
 )

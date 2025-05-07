@@ -38,17 +38,12 @@ fun Navigation(
         }
 
         composable(
-            route = "userMap/{conditionKey}",
+            route = ScreenRoute.UserMap.route,
             arguments = listOf(navArgument("conditionKey") { type = NavType.StringType })
         ) { backStackEntry ->
             val conditionKey = backStackEntry.arguments?.getString("conditionKey") ?: ""
-            UserMapScreen(
-                conditionKey = conditionKey,
-                mainViewModel = mainViewModel
-            )
+            UserMapScreen(conditionKey, mainViewModel)
         }
-
-
 
         composable(ScreenRoute.RouletteScreen.route) {
             RouletteScreen(navController, mainViewModel)

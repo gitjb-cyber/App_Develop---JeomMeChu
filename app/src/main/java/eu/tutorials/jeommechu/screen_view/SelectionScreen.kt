@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -33,7 +34,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -52,7 +52,6 @@ fun SelectionScreen(
     mainViewModel: MainViewModel
 ) {
     StatusBarView()
-    val colorScheme = MaterialTheme.colorScheme
     var showWarning by remember { mutableStateOf(false) }
     var isAllSelected by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -189,11 +188,11 @@ fun ToggleButtonModern(
     onCheckedChange: (Boolean) -> Unit
 ) {
     val containerColor by animateColorAsState(
-        targetValue = if (isChecked) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface,
+        targetValue = if (isChecked) colorScheme.primaryContainer else colorScheme.surface,
         label = "containerColorAnim"
     )
     val contentColor by animateColorAsState(
-        targetValue = if (isChecked) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface,
+        targetValue = if (isChecked) colorScheme.onPrimaryContainer else colorScheme.onSurface,
         label = "contentColorAnim"
     )
     OutlinedButton(
@@ -202,7 +201,7 @@ fun ToggleButtonModern(
             containerColor = containerColor,
             contentColor = contentColor
         ),
-        border = BorderStroke(1.dp, if (isChecked) MaterialTheme.colorScheme.primary else Color.LightGray),
+        border = BorderStroke(1.dp, if (isChecked) colorScheme.primary else Color.LightGray),
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier.padding(4.dp)
     ) {

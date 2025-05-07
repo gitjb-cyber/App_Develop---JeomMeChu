@@ -9,6 +9,7 @@ interface KakaoSearchService {
         @Query("query") query: String,
         @Query("x") x: Double,
         @Query("y") y: Double,
+        @Query("radius") radius: Int = 1000,
         @Query("sort") sort: String = "distance"
     ): KakaoSearchResponse
 }

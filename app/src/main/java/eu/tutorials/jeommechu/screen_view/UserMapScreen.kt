@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,6 +32,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -43,7 +45,6 @@ import com.google.android.gms.location.Priority
 import eu.tutorials.jeommechu.viewmodel.MainViewModel
 import kotlinx.coroutines.tasks.await
 
-
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("MissingPermission", "SetJavaScriptEnabled")
 @Composable
@@ -51,8 +52,8 @@ fun UserMapScreen(
     conditionKey: String, // 검색 키워드
     mainViewModel: MainViewModel
 ) {
-    val context = LocalContext.current // 현재 context (위치 요청 등에 필요)
-    val places by mainViewModel.places.collectAsState() // 검색된 장소 목록
+    val context = LocalContext.current // 현재 context(위치 요청 등)
+    val places by mainViewModel.places.collectAsState() // 검색된 장소 목록(거리순)
     val error by mainViewModel.error.collectAsState() // 오류 메시지
 
 
@@ -100,12 +101,18 @@ fun UserMapScreen(
         }
     }
 
+    // 화면에서 벗어날 때 위치 갱신 중단
     DisposableEffect(Unit) {
         onDispose {
             mainViewModel.stopLocationUpdates()
         }
     }
-    Column(modifier = Modifier.fillMaxSize()) {
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+        ) {
         // WebView
         AndroidView(factory = {
             WebView(it).apply {
@@ -134,7 +141,7 @@ fun UserMapScreen(
             }
         })
 
-        // 에러 메시지
+        // 오류 메시지가 있을 경우
         error?.let {
             Text(
                 text = "⚠ $it",
@@ -151,11 +158,11 @@ fun UserMapScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Text(
-            text = "📍 주변 추천 리스트 (거리순)",
+       /* Text(
+            text = "📍 주변 추천 리스트(거리순)",
             style = MaterialTheme.typography.h6,
             modifier = Modifier.padding(horizontal = 16.dp)
-        )
+        )*/
 
         Spacer(modifier = Modifier.height(4.dp))
 

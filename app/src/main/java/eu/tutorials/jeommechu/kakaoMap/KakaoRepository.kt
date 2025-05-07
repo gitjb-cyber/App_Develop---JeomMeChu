@@ -1,6 +1,7 @@
 package eu.tutorials.jeommechu.kakaoMap
 
 
+import android.util.Log
 import eu.tutorials.jeommechu.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -39,8 +40,10 @@ class KakaoRepository {
                 y = y,
                 sort = "distance"
             )
+            Log.d("KakaoRepository", "검색 결과 개수: ${response.documents.size}")
             response.documents
         } catch (e: Exception) {
+            Log.e("KakaoRepository", "카카오 장소 검색 실패: ${e.localizedMessage}", e)
             emptyList()
         }
     }

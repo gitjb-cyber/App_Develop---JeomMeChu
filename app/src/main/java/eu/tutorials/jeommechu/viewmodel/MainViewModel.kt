@@ -7,6 +7,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
@@ -54,8 +55,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val sliderDaysAgo: State<Int> = _sliderDaysAgo
 
 
-    // 랜덤 메뉴 돌리기 전 나오는 기본 텍스트
+    // 랜덤 메뉴 값을 저장하는 상태 변수
     private var selectedCondition by mutableStateOf("❓")
+
+    // 커스텀 룰렛 리스트를 저장하는 상태 변수
+    private val _customRouletteItems = mutableStateListOf<String>()
+    val customRouletteItems: List<String> get() = _customRouletteItems
+
 
     // 메모 Database 저장 변수
     private val memoDao = MemoDatabase.getDatabase(application).memoDao()
@@ -65,9 +71,21 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
 
-    // 랜덤 추천에서 사용할 데이터(추천된 데이터로 업데이트)
+    // 랜덤 추천에서 사용할 데이터값을 변경하는 함수(추천된 데이터로 업데이트)
     fun updateSelectedCondition(newValue: String) {
         selectedCondition = newValue
+    }
+
+    // 커스텀 룰렛 설정 함수(아이템 추가)
+    fun addCustomItem(item: String) {
+        if (item.isNotBlank() && !_customRouletteItems.contains(item)) {
+            _customRouletteItems.add(item)
+        }
+    }
+
+    // 커스텀 룰렛 설정 함수(아이템 삭제)
+    fun removeCustomItem(item: String) {
+        _customRouletteItems.remove(item)
     }
 
 

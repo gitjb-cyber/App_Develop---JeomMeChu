@@ -20,8 +20,10 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
@@ -38,6 +40,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import eu.tutorials.jeommechu.R
+import eu.tutorials.jeommechu.screen_view.ScreenRoute
 import eu.tutorials.jeommechu.viewmodel.MainViewModel
 import java.time.LocalDate
 
@@ -52,6 +55,9 @@ fun FoodCardColumn(
     val grouped: Map<String, List<String>> = matchingConditions.groupBy { conditionKey ->
         toggleConditions[conditionKey]?.getOrNull(0) ?: "기타"
     }
+
+    var showDialog by remember { mutableStateOf(false) }
+    var dialogContent by remember { mutableStateOf("") }
 
     // 각 그룹별로 제목과 LazyRow를 표시
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -103,7 +109,7 @@ fun FoodCardColumn(
                             ) {
                                 DropdownMenuItem(onClick = {
                                     menuExpanded = false
-                                    navController.navigate("userMap/$conditionKey")
+                                    navController.navigate(ScreenRoute.UserMap.createRoute(conditionKey))
                                 }) {
                                     Text("📍 주변 맛집 찾기")
                                 }
@@ -111,6 +117,8 @@ fun FoodCardColumn(
                                     menuExpanded = false
                                     val today = LocalDate.now().toString()
                                     mainViewModel.insertMemo(today, conditionKey)
+                                    dialogContent = conditionKey
+                                    showDialog = true
                                 }) {
                                     Text("🍽 오늘 먹을 음식으로 추가")
                                 }
@@ -144,5 +152,26 @@ fun FoodCardColumn(
                 }
             }
         }
+    }
+    // 확인/취소 알림창
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("오늘의 음식") },
+            text = { Text("'$dialogContent' 오늘 먹을 음식으로 선정되었습니다! 메모 화면에서 확인하시겠습니까?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDialog = false
+                    navController.navigate(ScreenRoute.CalendarMemoScreen.route)
+                }) {
+                    Text("확인")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text("취소")
+                }
+            }
+        )
     }
 }
