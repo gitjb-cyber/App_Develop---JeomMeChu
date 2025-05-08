@@ -45,7 +45,7 @@ import com.google.android.gms.location.Priority
 import eu.tutorials.jeommechu.viewmodel.MainViewModel
 import kotlinx.coroutines.tasks.await
 
-@RequiresApi(Build.VERSION_CODES.O)
+
 @SuppressLint("MissingPermission", "SetJavaScriptEnabled")
 @Composable
 fun UserMapScreen(
@@ -116,6 +116,7 @@ fun UserMapScreen(
         // WebView
         AndroidView(factory = {
             WebView(it).apply {
+                webViewRef.value = this
                 webViewClient = object : WebViewClient() {
                     @Deprecated("Deprecated in Java")
                     override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {

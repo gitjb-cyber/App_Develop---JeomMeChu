@@ -1,10 +1,7 @@
 package eu.tutorials.jeommechu.screen_view
 
 
-import android.annotation.SuppressLint
-import android.os.Build
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -39,13 +36,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.accompanist.flowlayout.FlowRow
 import eu.tutorials.jeommechu.R
+import eu.tutorials.jeommechu.navigation.ScreenRoute
 import eu.tutorials.jeommechu.view.AppBarView
 import eu.tutorials.jeommechu.view.StatusBarView
 import eu.tutorials.jeommechu.viewmodel.MainViewModel
 import kotlinx.coroutines.delay
 
-@RequiresApi(Build.VERSION_CODES.O)
-@SuppressLint("ResourceAsColor")
+
 @Composable
 fun SelectionScreen(
     navController: NavController,
@@ -121,7 +118,9 @@ fun SelectionScreen(
                         fontFamily = FontFamily(Font(R.font.jua_regular))
                     )
                     FlowRow(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        mainAxisSpacing = 8.dp,
+                        crossAxisSpacing = 8.dp
                     ) {
                         buttons.forEach { button ->
                             ToggleButtonModern(

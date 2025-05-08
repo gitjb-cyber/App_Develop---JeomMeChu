@@ -25,16 +25,25 @@ android {
         resValue("string", "KAKAO_NATIVE_APP_KEY", getApiKey("KAKAO_NATIVE_APP_KEY"))
         buildConfigField("String", "KAKAO_REST_API_KEY", getApiKey("KAKAO_REST_API_KEY"))
     }
-
+    signingConfigs {
+        create("release") {
+            storeFile = file("keystore/my-release-key.jks")
+            storePassword = project.properties["KEYSTORE_PASSWORD"] as String
+            keyAlias = "key_Jeom"
+            keyPassword = project.properties["KEY_PASSWORD"] as String
+        }
+    }
     buildTypes {
-        release {
+        getByName("release") {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8

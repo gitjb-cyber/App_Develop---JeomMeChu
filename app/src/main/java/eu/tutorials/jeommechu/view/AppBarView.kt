@@ -1,25 +1,23 @@
 package eu.tutorials.jeommechu.view
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
-import eu.tutorials.jeommechu.screen_view.ScreenRoute
+import eu.tutorials.jeommechu.navigation.ScreenRoute
 
 @Composable
 fun AppBarView(
     navController: NavController,
     onBackNavClicked: () -> Unit
 ) {
-    val isDarkMode = isSystemInDarkTheme()
-    val backgroundColor = if (isDarkMode) Color.Black else Color.White
-    val iconColor = if (isDarkMode) Color.White else Color.Black
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val iconColor = MaterialTheme.colorScheme.onBackground
 
     TopAppBar(
         title = {},

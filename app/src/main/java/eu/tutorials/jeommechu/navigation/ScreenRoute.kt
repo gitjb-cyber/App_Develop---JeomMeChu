@@ -1,4 +1,4 @@
-package eu.tutorials.jeommechu.screen_view
+package eu.tutorials.jeommechu.navigation
 
 sealed class ScreenRoute(val route: String)
 {

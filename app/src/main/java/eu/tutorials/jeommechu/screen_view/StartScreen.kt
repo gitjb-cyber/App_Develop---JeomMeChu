@@ -31,11 +31,11 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import eu.tutorials.jeommechu.R
+import eu.tutorials.jeommechu.navigation.ScreenRoute
 import eu.tutorials.jeommechu.view.StatusBarView
 import kotlinx.coroutines.delay
 
@@ -51,12 +51,9 @@ fun StartScreen(
 
     // 화면이 구성되면 딜레이 후에 visible을 true로 변경하여 애니메이션 실행
     LaunchedEffect(Unit) {
-        delay(150) // 500ms 후에 애니메이션 시작 (원하는 시간으로 조절)
+        delay(150)
         visible1 = true
-    }
-
-    LaunchedEffect(Unit) {
-        delay(300) // 500ms 후에 애니메이션 시작 (원하는 시간으로 조절)
+        delay(300)
         visible2 = true
     }
 
@@ -147,55 +144,3 @@ fun StartScreen(
     }
 }
 
-@Preview
-@Composable
-internal fun PreviewSampleContainer() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colorResource(id = R.color.app_color))
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly
-        ) {
-
-
-            // 메인 이미지
-            Image(
-                painter = painterResource(id = R.drawable.main_img_contents),
-                contentDescription = "메인 이미지",
-                contentScale = ContentScale.FillWidth,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 40.dp)
-            )
-        }
-
-        // 하단 버튼
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 64.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally // 버튼 중앙 정렬
-        ) {
-            ElevatedButton(
-                onClick = {},
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                colors = buttonColors(containerColor = Color.White)
-            )
-            {
-                Text(
-                    text = "시작하기",
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = 16.sp,
-                    fontFamily = FontFamily(Font(R.font.jua_regular))
-                )
-            }
-        }
-    }
-}

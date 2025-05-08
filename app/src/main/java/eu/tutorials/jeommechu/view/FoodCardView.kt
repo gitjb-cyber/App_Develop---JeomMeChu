@@ -6,13 +6,14 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.DropdownMenu
@@ -40,7 +41,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import eu.tutorials.jeommechu.R
-import eu.tutorials.jeommechu.screen_view.ScreenRoute
+import eu.tutorials.jeommechu.navigation.ScreenRoute
 import eu.tutorials.jeommechu.viewmodel.MainViewModel
 import java.time.LocalDate
 
@@ -58,6 +59,9 @@ fun FoodCardColumn(
 
     var showDialog by remember { mutableStateOf(false) }
     var dialogContent by remember { mutableStateOf("") }
+
+    val containerColor = MaterialTheme.colors.surface
+    val border = BorderStroke(1.dp, Color.Black)
 
     // 각 그룹별로 제목과 LazyRow를 표시
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -83,12 +87,13 @@ fun FoodCardColumn(
 
                     OutlinedCard(
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colors.surface,
+                            containerColor = containerColor
                         ),
-                        border = BorderStroke(1.dp, Color.Black),
+                        border = border,
                         modifier = Modifier
                             .padding(8.dp)
-                            .size(200.dp),
+                            .width(180.dp)
+                            .height(IntrinsicSize.Min),
                     ) {
                         Box(modifier = Modifier.fillMaxSize()) {
 

@@ -32,7 +32,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
 
-@RequiresApi(Build.VERSION_CODES.O)
+
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     // 조건과 일치하는 음식 제목들을 저장하는 상태 변수
     private val _matchingConditions = mutableStateOf<Set<String>>(emptySet())
@@ -116,12 +116,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun setSliderDaysAgo(days: Int) {
         _sliderDaysAgo.value = days
         updateExcludedFoods(days)
     }
 
     // memo에 저장된 음식 중 최근 n일간의 음식 제외
+    @RequiresApi(Build.VERSION_CODES.O)
     fun updateExcludedFoods(daysAgo: Int) {
         viewModelScope.launch {
             if (daysAgo == 0) {

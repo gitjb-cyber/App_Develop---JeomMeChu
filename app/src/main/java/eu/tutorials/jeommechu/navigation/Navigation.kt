@@ -1,4 +1,4 @@
-package eu.tutorials.jeommechu
+package eu.tutorials.jeommechu.navigation
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -8,21 +8,20 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import eu.tutorials.jeommechu.screen_view.RecommendationScreen
 import eu.tutorials.jeommechu.screen_view.RouletteScreen
-import eu.tutorials.jeommechu.screen_view.ScreenRoute
 import eu.tutorials.jeommechu.screen_view.SelectionScreen
 import eu.tutorials.jeommechu.screen_view.StartScreen
 import eu.tutorials.jeommechu.screen_view.CalendarMemoScreen
 import eu.tutorials.jeommechu.screen_view.UserMapScreen
 import eu.tutorials.jeommechu.viewmodel.MainViewModel
 
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Navigation(
-    navController: NavHostController = rememberNavController(),
+    navController: NavHostController,
     mainViewModel: MainViewModel = viewModel()
 ) {
 
