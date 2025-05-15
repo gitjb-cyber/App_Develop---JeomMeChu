@@ -10,6 +10,17 @@
 ![Food Recommendations App](https://github.com/user-attachments/assets/8906b7a0-10e2-4b1e-99af-7ca1269fb4ce)
 
 
+
+| 분야 | 사용 기술 |
+| --- | --- |
+| **UI** | Jetpack Compose, Material3, AnimatedVisibility |
+| **상태관리** | ViewModel, `mutableStateOf`, `StateFlow` |
+| **데이터 저장** | Room (Memo DB), LocalDate 기반 날짜 처리 |
+| **위치 기반** | FusedLocationProvider + Kakao Local API |
+| **지도 연동** | WebView (Kakao 지도 링크) |
+| **기타** | WebView, LazyColumn, FlowRow, 권한 처리 등 |
+
+
 ## 카테고리 선택
 
 
