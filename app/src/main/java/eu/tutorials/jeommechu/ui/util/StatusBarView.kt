@@ -1,4 +1,4 @@
-package eu.tutorials.jeommechu.view
+package eu.tutorials.jeommechu.ui.util
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color

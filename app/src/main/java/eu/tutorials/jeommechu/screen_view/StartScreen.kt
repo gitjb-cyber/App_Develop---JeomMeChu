@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import eu.tutorials.jeommechu.R
 import eu.tutorials.jeommechu.navigation.ScreenRoute
-import eu.tutorials.jeommechu.view.StatusBarView
+import eu.tutorials.jeommechu.ui.util.StatusBarView
 import kotlinx.coroutines.delay
 
 // 처음 화면
@@ -119,26 +119,6 @@ fun StartScreen(
                             fontFamily = FontFamily(Font(R.font.jua_regular))
                         ) }
                 }
-
-                /*
-                ElevatedButton(
-                    onClick = { navController.navigate(ScreenRoute.UserMap.route) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text("주변 음식점", color = MaterialTheme.colorScheme.primary)
-                }
-                 */
-                /*
-                ElevatedButton(
-                    onClick = { navController.navigate(ScreenRoute.RouletteScreen.route) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = buttonColors(containerColor = Color.White)
-                ) {
-                    Text("룰렛 돌리기", color = MaterialTheme.colorScheme.primary)
-                }
-                 */
             }
         }
     }

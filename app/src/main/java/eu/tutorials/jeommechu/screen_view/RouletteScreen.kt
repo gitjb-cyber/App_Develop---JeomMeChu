@@ -47,8 +47,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import eu.tutorials.jeommechu.R
-import eu.tutorials.jeommechu.view.AppBarView
-import eu.tutorials.jeommechu.view.StatusBarView
+import eu.tutorials.jeommechu.ui.util.AppBarView
+import eu.tutorials.jeommechu.ui.util.StatusBarView
 import eu.tutorials.jeommechu.viewmodel.MainViewModel
 import kotlinx.coroutines.delay
 

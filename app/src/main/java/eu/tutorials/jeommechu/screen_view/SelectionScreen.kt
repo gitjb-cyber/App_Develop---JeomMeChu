@@ -37,8 +37,8 @@ import androidx.navigation.NavController
 import com.google.accompanist.flowlayout.FlowRow
 import eu.tutorials.jeommechu.R
 import eu.tutorials.jeommechu.navigation.ScreenRoute
-import eu.tutorials.jeommechu.view.AppBarView
-import eu.tutorials.jeommechu.view.StatusBarView
+import eu.tutorials.jeommechu.ui.util.AppBarView
+import eu.tutorials.jeommechu.ui.util.StatusBarView
 import eu.tutorials.jeommechu.viewmodel.MainViewModel
 import kotlinx.coroutines.delay
 

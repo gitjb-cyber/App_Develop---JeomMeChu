@@ -44,10 +44,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import eu.tutorials.jeommechu.R
 import eu.tutorials.jeommechu.navigation.ScreenRoute
-import eu.tutorials.jeommechu.view.AppBarView
-import eu.tutorials.jeommechu.view.FoodCardColumn
-import eu.tutorials.jeommechu.view.StatusBarView
+import eu.tutorials.jeommechu.ui.util.AppBarView
+import eu.tutorials.jeommechu.ui.util.FoodCardColumn
+import eu.tutorials.jeommechu.ui.util.StatusBarView
 import eu.tutorials.jeommechu.viewmodel.MainViewModel
+import eu.tutorials.jeommechu.viewmodel.SelectMode
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -66,8 +67,8 @@ fun RecommendationScreen(
 
     // 조건 재확인 로직: 모두 일치가 비어있을 경우 자동 전환
     LaunchedEffect(matchingConditions, mainViewModel.selectedMode.value) {
-        if (mainViewModel.selectedMode.value == "모두 일치" && matchingConditions.isEmpty()) {
-            mainViewModel.setSelectedMode("하나라도 일치")
+        if (mainViewModel.selectedMode.value == SelectMode.ALL_MATCH && matchingConditions.isEmpty()) {
+            mainViewModel.setSelectedMode(SelectMode.ANY_MATCH)
             Toast.makeText(context, "중복될 수 없는 항목이 선택되어 하나만 포함되더라도 불러옵니다.", Toast.LENGTH_SHORT).show()
         }
     }
@@ -134,9 +135,9 @@ fun RecommendationScreen(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                 ) {
                     Button(
-                        onClick = { mainViewModel.setSelectedMode("모두 일치") },
+                        onClick = { mainViewModel.setSelectedMode(SelectMode.ALL_MATCH) },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (mainViewModel.selectedMode.value == "모두 일치")
+                            containerColor = if (mainViewModel.selectedMode.value == SelectMode.ALL_MATCH)
                                 colorScheme.primary else Color(0xFFE0E0E0)
                         ),
                         shape = RoundedCornerShape(8.dp),
@@ -146,9 +147,9 @@ fun RecommendationScreen(
                     }
 
                     Button(
-                        onClick = { mainViewModel.setSelectedMode("하나라도 일치") },
+                        onClick = { mainViewModel.setSelectedMode(SelectMode.ANY_MATCH) },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (mainViewModel.selectedMode.value == "하나라도 일치")
+                            containerColor = if (mainViewModel.selectedMode.value == SelectMode.ANY_MATCH)
                                 colorScheme.primary else Color(0xFFE0E0E0)
                         ),
                         shape = RoundedCornerShape(8.dp),
@@ -160,30 +161,6 @@ fun RecommendationScreen(
             }
 
             item {
-                /*Card(
-                    modifier = Modifier.padding(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White) // 배경색 흰색 적용
-                ) {
-                    Column(
-                        modifier = Modifier.padding(8.dp) // 내부 요소 패딩 추가
-                    ) {
-                        Text(
-                            text = "조건 일치 미리보기",
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontFamily = FontFamily(Font(R.font.jua_regular)),
-                            color = Color.Black
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = if (matchingConditions.isEmpty())
-                                "해당 조건에 모두 일치하는 메뉴가 없습니다"
-                            else
-                                matchingConditions.joinToString(", "),
-                            fontFamily = FontFamily(Font(R.font.jua_regular)),
-                            color = Color.Black
-                        )
-                    }
-                }*/
 
                 Spacer(modifier = Modifier.height(16.dp))
 

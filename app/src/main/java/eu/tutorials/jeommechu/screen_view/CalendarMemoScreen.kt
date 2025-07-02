@@ -70,7 +70,7 @@ fun CalendarMemoScreen(
     val memoList by mainViewModel.memoList.collectAsState()
 
     val focusManager = LocalFocusManager.current
-    val scrollState = rememberScrollState()
+    rememberScrollState()
     val calendarViewRef = remember { mutableStateOf<CalendarView?>(null) }
 
 

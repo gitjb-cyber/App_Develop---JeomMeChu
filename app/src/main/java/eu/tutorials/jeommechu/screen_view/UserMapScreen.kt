@@ -157,14 +157,6 @@ fun UserMapScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-       /* Text(
-            text = "📍 주변 추천 리스트(거리순)",
-            style = MaterialTheme.typography.h6,
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )*/
-
-        Spacer(modifier = Modifier.height(4.dp))
-
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()

@@ -1,4 +1,4 @@
-package eu.tutorials.jeommechu.view
+package eu.tutorials.jeommechu.ui.util
 
 import android.os.Build
 import androidx.annotation.RequiresApi

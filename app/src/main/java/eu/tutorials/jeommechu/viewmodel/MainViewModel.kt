@@ -47,8 +47,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val buttonStates: State<Map<String, Boolean>> = _buttonStates
 
     // 제외할 음식 상태 저장하는 상태 변수
-    private val _excludedFoods = mutableStateOf(setOf<String>())
-    val excludedFoods: State<Set<String>> = _excludedFoods
+    private val excludedFoods = mutableStateOf(setOf<String>())
 
     // 슬라이더에 사용할 상태 변수
     private val _sliderDaysAgo = mutableStateOf(0)
@@ -61,7 +60,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     // 커스텀 룰렛 리스트를 저장하는 상태 변수
     private val _customRouletteItems = mutableStateListOf<String>()
     val customRouletteItems: List<String> get() = _customRouletteItems
-
 
     // 메모 Database 저장 변수
     private val memoDao = MemoDatabase.getDatabase(application).memoDao()
@@ -104,15 +102,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // RecommendationScreen 에서 보여주는 기본 값
-    var selectedMode = mutableStateOf("모두 일치")
+    var selectedMode = mutableStateOf(SelectMode.ALL_MATCH)
         private set
 
     // selectedMode가 변경될 때 호출되는 함수
-    fun setSelectedMode(mode: String) {
+    fun setSelectedMode(mode: SelectMode) {
         selectedMode.value = mode
         when (mode) {
-            "모두 일치" -> updateMatchingConditions()
-            "하나라도 일치" -> updateAnyMatchingConditions()
+            SelectMode.ALL_MATCH -> updateMatchingConditions()
+            SelectMode.ANY_MATCH -> updateAnyMatchingConditions()
         }
     }
 
@@ -127,7 +125,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun updateExcludedFoods(daysAgo: Int) {
         viewModelScope.launch {
             if (daysAgo == 0) {
-                _excludedFoods.value = emptySet()
+                excludedFoods.value = emptySet()
             } else {
                 val today = LocalDate.now()
                 val targetDates = (1..daysAgo).map { today.minusDays(it.toLong()).toString() }
@@ -140,10 +138,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     .filter { it.isNotBlank() }
                     .toSet()
 
-                _excludedFoods.value = excluded
+                excludedFoods.value = excluded
             }
             // 조건 다시 계산
-            if (selectedMode.value == "모두 일치") {
+            if (selectedMode.value == SelectMode.ALL_MATCH) {
                 updateMatchingConditions()
             } else {
                 updateAnyMatchingConditions()
@@ -163,7 +161,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
             .map { it.title }
             .toSet()
-        return allMatching - _excludedFoods.value
+        return allMatching - excludedFoods.value
     }
 
     // 카테고리에서 일치 조건을 충족시킨 음식 모음(교집합)
@@ -185,7 +183,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
             .map { it.title }
             .toSet()
-        return allMatchingAny - _excludedFoods.value
+        return allMatchingAny - excludedFoods.value
     }
 
     // 카테고리에서 일치 조건을 충족시킨 음식 모음(합집합)
@@ -216,16 +214,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-
-
     // 카카오 맵
-    private val _location = mutableStateOf<Location?>(null)
-    val location: State<Location?> = _location
-
+    private val location = mutableStateOf<Location?>(null)
     private var locationJob: Job? = null
 
     fun updateLocation(newLocation: Location?) {
-        _location.value = newLocation
+        location.value = newLocation
     }
 
     private val kakaoRepository = KakaoRepository()
@@ -238,7 +232,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun searchNearbyPlaces(conditionKey: String) {
         viewModelScope.launch {
-            val current = _location.value
+            val current = location.value
             if (current == null) {
                 _error.value = "위치를 가져올 수 없습니다."
                 return@launch
@@ -275,7 +269,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 } catch (e: Exception) {
                     _error.value = "위치 갱신 실패: ${e.message}"
                 }
-                delay(10_000) // 10초마다 위치 재요청
+                delay(10000) // 10초마다 위치 재요청
             }
         }
     }
@@ -289,4 +283,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _error.value = message
     }
 
+}
+
+enum class SelectMode(val label: String) {
+    ALL_MATCH("모두 일치"),
+    ANY_MATCH("하나라도 일치");
+
+    companion object {
+        fun fromLabel(label: String): SelectMode? =
+            entries.find { it.label == label }
+    }
 }
