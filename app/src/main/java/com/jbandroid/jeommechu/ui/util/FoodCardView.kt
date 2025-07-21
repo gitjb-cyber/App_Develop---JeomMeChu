@@ -14,12 +14,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
@@ -58,7 +58,7 @@ fun FoodCardColumn(
     var showDialog by remember { mutableStateOf(false) }
     var dialogContent by remember { mutableStateOf("") }
 
-    val containerColor = MaterialTheme.colors.surface
+    val containerColor = MaterialTheme.colorScheme.surface
     val border = BorderStroke(1.dp, Color.Black)
 
     // 각 그룹별로 제목과 LazyRow를 표시
@@ -68,7 +68,7 @@ fun FoodCardColumn(
             Text(
                 text = groupTitle,
                 color = colorScheme.onBackground,
-                style = MaterialTheme.typography.h5,
+                style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp),
                 fontFamily = FontFamily(Font(R.font.jua_regular))
             )
@@ -111,21 +111,27 @@ fun FoodCardColumn(
                                 expanded = menuExpanded,
                                 onDismissRequest = { menuExpanded = false }
                             ) {
-                                DropdownMenuItem(onClick = {
-                                    menuExpanded = false
-                                    navController.navigate(ScreenRoute.UserMap.createRoute(conditionKey))
-                                }) {
-                                    Text("📍 주변 맛집 찾기")
-                                }
-                                DropdownMenuItem(onClick = {
-                                    menuExpanded = false
-                                    val today = LocalDate.now().toString()
-                                    mainViewModel.insertMemo(today, conditionKey)
-                                    dialogContent = conditionKey
-                                    showDialog = true
-                                }) {
-                                    Text("🍽 오늘 먹을 음식으로 추가")
-                                }
+                                DropdownMenuItem(
+                                    text = { Text("📍 주변 맛집 찾기") },
+                                    onClick = {
+                                        menuExpanded = false
+                                        navController.navigate(
+                                            ScreenRoute.UserMap.createRoute(
+                                                conditionKey
+                                            )
+                                        )
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("🍽 오늘 먹을 음식으로 추가") },
+                                    onClick = {
+                                        menuExpanded = false
+                                        val today = LocalDate.now().toString()
+                                        mainViewModel.insertMemo(today, conditionKey)
+                                        dialogContent = conditionKey
+                                        showDialog = true
+                                    }
+                                )
                             }
 
 
@@ -137,7 +143,7 @@ fun FoodCardColumn(
                             ) {
                                 Text(
                                     text = conditionKey,
-                                    style = MaterialTheme.typography.h6,
+                                    style = MaterialTheme.typography.headlineSmall,
                                     fontFamily = FontFamily(Font(R.font.jua_regular))
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))
@@ -146,7 +152,7 @@ fun FoodCardColumn(
                                 subValues.forEach { tag ->
                                     Text(
                                         text = tag,
-                                        style = MaterialTheme.typography.body2,
+                                        style = MaterialTheme.typography.bodyMedium,
                                         fontFamily = FontFamily(Font(R.font.jua_regular))
                                     )
                                 }

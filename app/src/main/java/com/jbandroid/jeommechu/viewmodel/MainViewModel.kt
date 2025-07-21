@@ -1,7 +1,6 @@
 package com.jbandroid.jeommechu.viewmodel
 
 import android.app.Application
-import android.content.Context
 import android.location.Location
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -10,24 +9,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
 import com.jbandroid.jeommechu.calendar_memo_db.Memo
 import com.jbandroid.jeommechu.calendar_memo_db.MemoDatabase
 import com.jbandroid.jeommechu.calendar_memo_db.MemoRepository
 import com.jbandroid.jeommechu.data.FoodsData
 import com.jbandroid.jeommechu.kakaoMap.KakaoRepository
 import com.jbandroid.jeommechu.kakaoMap.PlaceModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
 
 
@@ -289,35 +282,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         val sorted = filtered.sortedBy { it.distance }
 
         _places.value = sorted
-    }
-
-    // 위치 실시간 추적 (원한다면 사용 가능)
-    private var locationJob: Job? = null
-
-    fun startLocationUpdates(context: Context, keyword: String) {
-        stopLocationUpdates()
-
-        val fusedClient = LocationServices.getFusedLocationProviderClient(context)
-
-        locationJob = viewModelScope.launch {
-            while (isActive) {
-                try {
-                    val location = fusedClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null).await()
-                    updateLocation(location)
-                    searchNearbyPlaces(keyword)
-                } catch (e: SecurityException) {
-                    setError("위치 권한이 필요합니다.")
-                } catch (e: Exception) {
-                    setError("위치 갱신 실패: ${e.message}")
-                }
-                delay(10000)
-            }
-        }
-    }
-
-    fun stopLocationUpdates() {
-        locationJob?.cancel()
-        locationJob = null
     }
 
     // 현재 위치 주소 저장
