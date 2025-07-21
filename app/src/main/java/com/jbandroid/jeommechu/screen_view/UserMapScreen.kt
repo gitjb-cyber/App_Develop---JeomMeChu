@@ -136,7 +136,6 @@ fun UserMapScreen(
         return
     }
 
-
     // 위치 가져오기 진단
     if (location != null) {
         Log.d("Location", "✅ 위치 가져오기 성공: ${location!!.latitude}, ${location!!.longitude}")

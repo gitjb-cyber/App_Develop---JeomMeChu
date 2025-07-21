@@ -16,8 +16,11 @@ class KakaoRepository {
     init {
         // Kakao 인증 헤더용 Interceptor
         val interceptor = Interceptor { chain ->
+            val kakaoKey = BuildConfig.KAKAO_REST_API_KEY
+            Log.d("KakaoKeyCheck", "🔑 REST API Key: $kakaoKey")
+
             val newRequest = chain.request().newBuilder()
-                .addHeader("Authorization", "KakaoAK ${BuildConfig.KAKAO_REST_API_KEY}")
+                .addHeader("Authorization", "KakaoAK $kakaoKey")
                 .build()
             chain.proceed(newRequest)
         }

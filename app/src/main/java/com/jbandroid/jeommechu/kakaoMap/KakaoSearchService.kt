@@ -20,4 +20,3 @@ interface KakaoSearchService {
         @Query("y") y: Double
     ): AddressResponse
 }
-

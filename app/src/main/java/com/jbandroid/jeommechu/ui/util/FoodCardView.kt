@@ -1,7 +1,5 @@
 package com.jbandroid.jeommechu.ui.util
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +25,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -68,6 +67,7 @@ fun FoodCardColumn(
             // 그룹 제목: 예를 들어 "한식", "일식" 등
             Text(
                 text = groupTitle,
+                color = colorScheme.onBackground,
                 style = MaterialTheme.typography.h5,
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp),
                 fontFamily = FontFamily(Font(R.font.jua_regular))

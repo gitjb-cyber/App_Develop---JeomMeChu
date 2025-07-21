@@ -2,7 +2,10 @@ package com.jbandroid.jeommechu.viewmodel
 
 import android.app.Application
 import android.content.Context
+import android.content.pm.PackageManager
 import android.location.Location
+import android.util.Base64
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -28,6 +31,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.security.MessageDigest
 import java.time.LocalDate
 
 
@@ -331,78 +335,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             _currentAddress.value = address
         }
     }
-/*
-
-    // 카카오 맵
-    private val location = mutableStateOf<Location?>(null)
-    private var locationJob: Job? = null
-
-    fun updateLocation(newLocation: Location?) {
-        location.value = newLocation
-    }
-
-    private val kakaoRepository = KakaoRepository()
-
-    private val _places = MutableStateFlow<List<PlaceDocument>>(emptyList())
-    val places: StateFlow<List<PlaceDocument>> = _places
-
-    private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error
-
-    fun searchNearbyPlaces(conditionKey: String) {
-        viewModelScope.launch {
-            val current = location.value
-            if (current == null) {
-                _error.value = "위치를 가져올 수 없습니다."
-                return@launch
-            }
-
-            try {
-                val x = current.longitude
-                val y = current.latitude
-                val results = kakaoRepository.searchNearbyPlaces(conditionKey, x, y)
-                _places.value = results
-                _error.value = null // 성공 시 에러 초기화
-            } catch (e: Exception) {
-                _error.value = "장소 검색 중 오류 발생"
-            }
-        }
-    }
-
-    fun startLocationUpdates(context: Context, conditionKey: String) {
-        stopLocationUpdates() // 기존 작업 중지
-
-        val fusedClient = LocationServices.getFusedLocationProviderClient(context)
-
-        locationJob = viewModelScope.launch {
-            while (isActive) {
-                try {
-                    val location = fusedClient
-                        .getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
-                        .await()
-                    updateLocation(location)
-                    searchNearbyPlaces(conditionKey)
-                } catch (e: SecurityException) {
-                    _error.value = "위치 권한이 필요합니다."
-                    updateLocation(null)
-                } catch (e: Exception) {
-                    _error.value = "위치 갱신 실패: ${e.message}"
-                }
-                delay(10000) // 10초마다 위치 재요청
-            }
-        }
-    }
-
-    fun stopLocationUpdates() {
-        locationJob?.cancel()
-        locationJob = null
-    }
-
-    fun setError(message: String) {
-        _error.value = message
-    }
-*/
-
 }
 
 enum class SelectMode(val label: String) {
