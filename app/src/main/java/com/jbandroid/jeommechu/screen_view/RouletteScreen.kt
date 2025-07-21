@@ -19,8 +19,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.TextField
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
@@ -123,7 +123,7 @@ fun RouletteScreen(
                 Button(
                     onClick = { isCustomMode = false },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (!isCustomMode) MaterialTheme.colors.primary else Color.LightGray
+                        containerColor = if (!isCustomMode) MaterialTheme.colorScheme.primary else Color.LightGray
                     )
                 ) {
                     Text(
@@ -135,7 +135,7 @@ fun RouletteScreen(
                 Button(
                     onClick = { isCustomMode = true },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isCustomMode) MaterialTheme.colors.primary else Color.LightGray
+                        containerColor = if (isCustomMode) MaterialTheme.colorScheme.primary else Color.LightGray
                     )
                 ) {
                     Text(
@@ -203,7 +203,7 @@ fun RouletteScreen(
 
             Text(
                 text = if (isSpinning) rouletteList.getOrNull(randomIndex) ?: "❓" else selectedValue,
-                style = MaterialTheme.typography.h4,
+                style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily(Font(R.font.jua_regular)),
                 color = textColor,
@@ -219,7 +219,7 @@ fun RouletteScreen(
                     .padding(horizontal = 32.dp)
                     .fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isCustomMode) MaterialTheme.colors.primary else Color.LightGray
+                    containerColor = if (isCustomMode) MaterialTheme.colorScheme.primary else Color.LightGray
                 )
             ) {
                 Text(

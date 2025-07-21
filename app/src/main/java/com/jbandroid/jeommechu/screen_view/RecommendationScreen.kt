@@ -1,9 +1,7 @@
 package com.jbandroid.jeommechu.screen_view
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,10 +40,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.jbandroid.jeommechu.ui.util.AppBarView
-import com.jbandroid.jeommechu.ui.util.FoodCardColumn
 import com.jbandroid.jeommechu.R
 import com.jbandroid.jeommechu.navigation.ScreenRoute
+import com.jbandroid.jeommechu.ui.util.AppBarView
+import com.jbandroid.jeommechu.ui.util.FoodCardColumn
 import com.jbandroid.jeommechu.ui.util.StatusBarView
 import com.jbandroid.jeommechu.viewmodel.MainViewModel
 import com.jbandroid.jeommechu.viewmodel.SelectMode
