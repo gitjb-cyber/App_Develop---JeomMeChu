@@ -2,10 +2,7 @@ package com.jbandroid.jeommechu.viewmodel
 
 import android.app.Application
 import android.content.Context
-import android.content.pm.PackageManager
 import android.location.Location
-import android.util.Base64
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -31,7 +28,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import java.security.MessageDigest
 import java.time.LocalDate
 
 
