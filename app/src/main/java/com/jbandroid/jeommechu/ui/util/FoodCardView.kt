@@ -58,7 +58,7 @@ fun FoodCardColumn(
     var showDialog by remember { mutableStateOf(false) }
     var dialogContent by remember { mutableStateOf("") }
 
-    val containerColor = MaterialTheme.colorScheme.surface
+    val containerColor = colorScheme.surface
     val border = BorderStroke(1.dp, Color.Black)
 
     // 각 그룹별로 제목과 LazyRow를 표시
