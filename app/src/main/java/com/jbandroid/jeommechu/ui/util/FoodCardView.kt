@@ -91,8 +91,8 @@ fun FoodCardColumn(
                         border = border,
                         modifier = Modifier
                             .padding(8.dp)
-                            .width(180.dp)
-                            .height(IntrinsicSize.Min),
+                            .width(160.dp)
+                            .height(240.dp),
                     ) {
                         Box(modifier = Modifier.fillMaxSize()) {
 

@@ -68,8 +68,10 @@ fun RouletteScreen(
     var isCustomMode by remember { mutableStateOf(false) }
     var newItem by remember { mutableStateOf("") }
 
-    val rouletteList = if (isCustomMode)
-        mainViewModel.customRouletteItems else mainViewModel.matchingConditions.value.toList()
+    val rouletteList =
+        if (isCustomMode)
+        mainViewModel.customRouletteItems
+        else mainViewModel.matchingConditions.value.toList()
 
     val transition = rememberInfiniteTransition(label = "")
     val randomIndex by transition.animateValue(
@@ -121,7 +123,10 @@ fun RouletteScreen(
             // 모드 선택 버튼
             Row(modifier = Modifier.padding(16.dp)) {
                 Button(
-                    onClick = { isCustomMode = false },
+                    onClick = {
+                        isCustomMode = false
+                        selectedValue = "❓"
+                              },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (!isCustomMode) MaterialTheme.colorScheme.primary else Color.LightGray
                     )
@@ -133,7 +138,10 @@ fun RouletteScreen(
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Button(
-                    onClick = { isCustomMode = true },
+                    onClick = {
+                        isCustomMode = true
+                        selectedValue = "❓"
+                              },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (isCustomMode) MaterialTheme.colorScheme.primary else Color.LightGray
                     )
@@ -212,15 +220,26 @@ fun RouletteScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
+            val spinButtonColors = ButtonDefaults.buttonColors(
+                containerColor = if (isSpinning)
+                    MaterialTheme.colorScheme.secondaryContainer
+                else
+                    MaterialTheme.colorScheme.primary,
+                contentColor = if (isSpinning)
+                    MaterialTheme.colorScheme.onSecondaryContainer
+                else
+                    MaterialTheme.colorScheme.onPrimary,
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
             Button(
                 onClick = { isSpinning = true },
-                enabled = !isSpinning,
+                enabled = !isSpinning && rouletteList.isNotEmpty(),
                 modifier = Modifier
                     .padding(horizontal = 32.dp)
                     .fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isCustomMode) MaterialTheme.colorScheme.primary else Color.LightGray
-                )
+                colors = spinButtonColors
             ) {
                 Text(
                     text = "랜덤 선택!",

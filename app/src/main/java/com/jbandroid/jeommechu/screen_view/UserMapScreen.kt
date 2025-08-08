@@ -210,6 +210,8 @@ fun UserMapScreen(
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
 
+            Text(conditionKey, style = MaterialTheme.typography.bodyLarge)
+
             Text(
                 text = "📋 해당 맛집을 거리순으로 정렬합니다",
                 style = MaterialTheme.typography.bodyMedium,

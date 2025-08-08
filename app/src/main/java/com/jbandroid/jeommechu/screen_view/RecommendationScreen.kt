@@ -62,23 +62,15 @@ fun RecommendationScreen(
 
     val context = LocalContext.current
 
-    // 조건 재확인 로직: 모두 일치가 비어있을 경우 자동 전환
-    LaunchedEffect(matchingConditions, mainViewModel.selectedMode.value) {
-        if (mainViewModel.selectedMode.value == SelectMode.ALL_MATCH && matchingConditions.isEmpty()) {
-            mainViewModel.setSelectedMode(SelectMode.ANY_MATCH)
-            Toast.makeText(context, "중복될 수 없는 항목이 선택되어 하나만 포함되더라도 불러옵니다.", Toast.LENGTH_SHORT).show()
-        }
+    LaunchedEffect(Unit) {
+        mainViewModel.setSelectedMode(SelectMode.ALL_MATCH)
     }
 
     Scaffold(
         // AppBarView 의 topBar 내부
         topBar = {
             AppBarView(navController)
-            // ← 아이콘 버튼을 누르면 뒤로 돌아감
-            //  navigateUp : 사용자를 이전에 있던 화면으로 돌아가게 하는 것
-            {
-                navController.navigateUp()
-            }
+            { navController.navigateUp() }
         }
     ) { innerPadding ->
         LazyColumn(
@@ -125,115 +117,139 @@ fun RecommendationScreen(
             }
 
             item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                ) {
-                    Button(
-                        onClick = { mainViewModel.setSelectedMode(SelectMode.ALL_MATCH) },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = if (mainViewModel.selectedMode.value == SelectMode.ALL_MATCH)
-                                colorScheme.primary else Color(0xFFE0E0E0)
-                        ),
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.weight(1f).padding(horizontal = 8.dp)
+                if (matchingConditions.isEmpty()) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF3F3)),
+                        elevation = CardDefaults.cardElevation(6.dp)
                     ) {
-                        Text("모든 조건 일치", fontFamily = FontFamily(Font(R.font.jua_regular)))
-                    }
-
-                    Button(
-                        onClick = { mainViewModel.setSelectedMode(SelectMode.ANY_MATCH) },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = if (mainViewModel.selectedMode.value == SelectMode.ANY_MATCH)
-                                colorScheme.primary else Color(0xFFE0E0E0)
-                        ),
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.weight(1f).padding(horizontal = 8.dp)
-                    ) {
-                        Text("하나라도 일치", fontFamily = FontFamily(Font(R.font.jua_regular)))
-                    }
-                }
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(16.dp))
-
-                FoodCardColumn(
-                    matchingConditions = matchingConditions,
-                    toggleConditions = toggleConditions,
-                    navController = navController,
-                    mainViewModel = mainViewModel
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-
-
-            item {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFFFE2E2)),
-                    elevation = CardDefaults.cardElevation(8.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = Icons.Default.Star,
-                                contentDescription = "추천",
-                                tint = Color(0xFFE91E63),
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
+                        Column(modifier = Modifier.padding(16.dp)) {
                             Text(
-                                text = "오늘의 추천 메뉴",
-                                style = MaterialTheme.typography.titleLarge,
+                                text = "해당 조건을 만족하는 음식을 찾을 수 없습니다.",
+                                style = MaterialTheme.typography.titleMedium,
                                 fontFamily = FontFamily(Font(R.font.jua_regular)),
                                 color = Color.Black
                             )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Button(
+                                onClick = { navController.navigate(ScreenRoute.SelectionType.route) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 32.dp),
+                                shape = RoundedCornerShape(12.dp),
+                                elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = colorScheme.primary,
+                                    contentColor = colorScheme.onPrimary
+                                )
+                            ) {
+                                Text("조건 다시 선택하기", fontFamily = FontFamily(Font(R.font.jua_regular)))
+                            }
                         }
-
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        Text(
-                            text = matchingConditions.shuffled().take(5).joinToString(", "),
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontFamily = FontFamily(Font(R.font.jua_regular)),
-                            color = Color.DarkGray
-                        )
                     }
                 }
             }
 
-            item {
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    onClick = {
-                        navController.navigate(ScreenRoute.RouletteScreen.route)
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 32.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colorScheme.primary,
-                        contentColor = colorScheme.onPrimary
+            if (matchingConditions.isNotEmpty()) {
+                item {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    FoodCardColumn(
+                        matchingConditions = matchingConditions,
+                        toggleConditions = toggleConditions,
+                        navController = navController,
+                        mainViewModel = mainViewModel
                     )
-                ) {
-                    Text(
-                        "랜덤 선택",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily(Font(R.font.jua_regular))
-                    )
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
-                Spacer(modifier = Modifier.height(32.dp))
+
+                item {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFE2E2)),
+                        elevation = CardDefaults.cardElevation(8.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Default.Star,
+                                    contentDescription = "추천",
+                                    tint = Color(0xFFE91E63),
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "오늘의 추천 메뉴",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontFamily = FontFamily(Font(R.font.jua_regular)),
+                                    color = Color.Black
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            Text(
+                                text = matchingConditions.shuffled().take(5).joinToString(", "),
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontFamily = FontFamily(Font(R.font.jua_regular)),
+                                color = Color.DarkGray
+                            )
+                        }
+                    }
+                }
+
+                item {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Button(
+                            onClick = { navController.navigate(ScreenRoute.SelectionType.route) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 32.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colorScheme.primary,
+                                contentColor = colorScheme.onPrimary
+                            )
+                        ) {
+                            Text("조건 다시 선택하기",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = FontFamily(Font(R.font.jua_regular))
+                            )
+                        }
+                        Button(
+                            onClick = {
+                                navController.navigate(ScreenRoute.RouletteScreen.route)
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 32.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colorScheme.primary,
+                                contentColor = colorScheme.onPrimary
+                            )
+                        ) {
+                            Text(
+                                "랜덤 선택",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = FontFamily(Font(R.font.jua_regular))
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(32.dp))
+                    }
+                }
             }
         }
     }

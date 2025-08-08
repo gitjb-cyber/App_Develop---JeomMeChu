@@ -106,7 +106,7 @@ fun StartScreen(
                     )
                 ) {
                     ElevatedButton(
-                        onClick = { navController.navigate(ScreenRoute.SelectionScreen.route) },
+                        onClick = { navController.navigate(ScreenRoute.SelectionIntro.route) },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
                         colors = buttonColors(containerColor = Color.White)

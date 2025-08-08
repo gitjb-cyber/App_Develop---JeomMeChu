@@ -46,7 +46,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
 
     // 랜덤 메뉴 값을 저장하는 상태 변수
-    private var selectedCondition by mutableStateOf("❓")
+    var selectedCondition by mutableStateOf("❓")
 
     // 커스텀 룰렛 리스트를 저장하는 상태 변수
     private val _customRouletteItems = mutableStateListOf<String>()
@@ -59,6 +59,37 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val memoList: StateFlow<List<Memo>> = repository.allMemos
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
+
+    // 감정 선택 → 음식명 기준의 매핑
+    private val emotionFoodMap = mapOf(
+        "가볍게 먹고 싶어요" to listOf(
+            "김밥", "샐러드 파스타", "죽", "메밀소바", "쌀국수", "비빔밥"
+        ),
+        "얼큰하게 스트레스 풀고 싶어요" to listOf(
+            "짬뽕", "부대찌개", "얼큰 순대국밥", "얼큰 콩나물국밥", "닭볶음탕", "육개장", "김치찌개", "떡볶이"
+        ),
+        "든든하게 배 채우고 싶어요" to listOf(
+            "돈까스", "불고기", "제육볶음", "부대찌개", "곱창전골", "갈비탕", "규동", "스팸 볶음밥"
+        ),
+        "속이 안 좋아요" to listOf(
+            "미역국", "콩나물국밥", "삼계탕", "닭한마리", "수제비", "우동", "죽", "갈비탕"
+        )
+    )
+
+    // 모든 음식 title 넣기
+    fun setMatchingConditionsFromAllFoods() {
+        val allTitles = FoodsData.foodsList.map { it.title }.toSet()
+        _matchingConditions.value = allTitles
+        _toggleConditions.value = getMatchingConditionsMap(allTitles)
+    }
+
+    // 감정 선택 시 랜덤 음식 추천 함수
+    fun selectFoodByEmotion(emotion: String): String {
+        val candidates = emotionFoodMap[emotion].orEmpty()
+            .filter { foodTitle -> FoodsData.foodsList.any { it.title == foodTitle } }
+
+        return candidates.randomOrNull() ?: "❓"
+    }
 
     // 랜덤 추천에서 사용할 데이터값을 변경하는 함수(추천된 데이터로 업데이트)
     fun updateSelectedCondition(newValue: String) {
@@ -77,14 +108,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _customRouletteItems.remove(item)
     }
 
-
-    // 버튼 클릭 시 상태를 토글하는 함수
-    fun toggleButton(button: String) {
-        _buttonStates.value = _buttonStates.value.toMutableMap().apply {
-            this[button] = !(this[button] ?: false)
-        }
-    }
-
     // 전체 선택 -> 다른 버튼의 상태를 강제 설정하는 함수
     fun setButtonState(button: String, isChecked: Boolean) {
         _buttonStates.value = _buttonStates.value.toMutableMap().apply {
@@ -101,10 +124,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         selectedMode.value = mode
         when (mode) {
             SelectMode.ALL_MATCH -> updateMatchingConditions()
-            SelectMode.ANY_MATCH -> updateAnyMatchingConditions()
         }
     }
-
 
 
     // memo에 저장된 음식 중 최근 n일간의 음식
@@ -298,8 +319,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 }
 
 enum class SelectMode(val label: String) {
-    ALL_MATCH("모두 일치"),
-    ANY_MATCH("하나라도 일치");
+    ALL_MATCH("모두 일치");
 
     companion object {
         fun fromLabel(label: String): SelectMode? =
