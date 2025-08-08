@@ -1,8 +1,6 @@
 package com.jbandroid.jeommechu.screen_view
 
 import android.annotation.SuppressLint
-import android.widget.Toast
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -59,8 +57,6 @@ fun RecommendationScreen(
     val matchingConditions by mainViewModel.matchingConditions
     val toggleConditions by mainViewModel.toggleConditions
     val sliderValue by mainViewModel.sliderDaysAgo
-
-    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         mainViewModel.setSelectedMode(SelectMode.ALL_MATCH)
