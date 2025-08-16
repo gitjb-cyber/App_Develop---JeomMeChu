@@ -29,7 +29,6 @@ fun SelectionStyleScreen(
 
     val countryOptions = listOf("한식", "일식", "중식", "양식", "아시안")
     val meatOptions = listOf("돼지고기", "소고기", "양고기", "닭고기", "계란", "생선", "해산물")
-    val otherOptions = listOf("비건")
 
     Scaffold(
         topBar = {
@@ -51,12 +50,6 @@ fun SelectionStyleScreen(
             FeatureGroup(
                 title = "고기",
                 options = meatOptions,
-                buttonStates,
-                mainViewModel::setButtonState
-            )
-            FeatureGroup(
-                title = "기타",
-                options = otherOptions,
                 buttonStates,
                 mainViewModel::setButtonState
             )

@@ -29,7 +29,7 @@ fun SelectionFeatureScreen(
     StatusBarView()
     val buttonStates = mainViewModel.buttonStates.value
 
-    val temperatureOptions = listOf("뜨거움🔥", "차가움❄")
+    val temperatureOptions = listOf("뜨거움🔥","살짝 매움", "차가움❄")
     val soupOptions = listOf("국물⭕", "국물❌")
     val spicyOptions = listOf("매움🌶", "안매움")
 

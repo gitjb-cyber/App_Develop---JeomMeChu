@@ -39,7 +39,7 @@ fun SelectionTypeScreen(
     mainViewModel: MainViewModel
 ) {
     StatusBarView()
-    val options = listOf("밥🍚", "빵🍞", "면🍝", "떡", "기타", "탄수화물 X")
+    val options = listOf("밥🍚", "빵🍞", "면🍝", "떡", "기타")
     val selectedStates = mainViewModel.buttonStates.value
 
     Scaffold(

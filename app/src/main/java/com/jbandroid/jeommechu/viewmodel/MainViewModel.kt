@@ -1,5 +1,6 @@
 package com.jbandroid.jeommechu.viewmodel
 
+import android.R.attr.label
 import android.app.Application
 import android.location.Location
 import androidx.compose.runtime.State
@@ -12,7 +13,6 @@ import androidx.lifecycle.viewModelScope
 import com.jbandroid.jeommechu.calendar_memo_db.Memo
 import com.jbandroid.jeommechu.calendar_memo_db.MemoDatabase
 import com.jbandroid.jeommechu.calendar_memo_db.MemoRepository
-import com.jbandroid.jeommechu.data.FoodsData
 import com.jbandroid.jeommechu.kakaoMap.KakaoRepository
 import com.jbandroid.jeommechu.kakaoMap.PlaceModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +22,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import com.jbandroid.jeommechu.data.Tag
+import com.jbandroid.jeommechu.data.Tags
+import com.jbandroid.jeommechu.data.Food
+import com.jbandroid.jeommechu.data.FoodsData
 
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -34,7 +38,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val toggleConditions: State<Map<String, List<String>>> = _toggleConditions
 
     // 각 버튼(옵션)의 선택 상태를 저장하는 상태 변수
-    private val _buttonStates = mutableStateOf(mutableMapOf<String, Boolean>())
+    private val _buttonStates =  mutableStateOf(mutableMapOf<String, Boolean>())
     val buttonStates: State<Map<String, Boolean>> = _buttonStates
 
     // 제외할 음식 상태 저장하는 상태 변수
@@ -60,21 +64,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
 
-    // 감정 선택 → 음식명 기준의 매핑
-    private val emotionFoodMap = mapOf(
-        "가볍게 먹고 싶어요" to listOf(
-            "김밥", "샐러드 파스타", "죽", "메밀소바", "쌀국수", "비빔밥"
-        ),
-        "얼큰하게 스트레스 풀고 싶어요" to listOf(
-            "짬뽕", "부대찌개", "얼큰 순대국밥", "얼큰 콩나물국밥", "닭볶음탕", "육개장", "김치찌개", "떡볶이"
-        ),
-        "든든하게 배 채우고 싶어요" to listOf(
-            "돈까스", "불고기", "제육볶음", "부대찌개", "곱창전골", "갈비탕", "규동", "스팸 볶음밥"
-        ),
-        "속이 안 좋아요" to listOf(
-            "미역국", "콩나물국밥", "삼계탕", "닭한마리", "수제비", "우동", "죽", "갈비탕"
-        )
-    )
 
     // 모든 음식 title 넣기
     fun setMatchingConditionsFromAllFoods() {
@@ -83,13 +72,61 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _toggleConditions.value = getMatchingConditionsMap(allTitles)
     }
 
-    // 감정 선택 시 랜덤 음식 추천 함수
-    fun selectFoodByEmotion(emotion: String): String {
-        val candidates = emotionFoodMap[emotion].orEmpty()
-            .filter { foodTitle -> FoodsData.foodsList.any { it.title == foodTitle } }
+    // 감정 선택
+    enum class Emotion(val label: String) {
+        FAST_ONE("빠르게 한끼"),
+        LIGHT_ONE("가볍게 1인분"),
+        COLD("차가운 음식이 땡겨요"),
+        SPICY("얼큰하게 스트레스 풀고 싶어요"),
+        HEARTY("든든하게 배 채우고 싶어요");
 
-        return candidates.randomOrNull() ?: "❓"
+        companion object {
+            fun fromLabel(text: String): Emotion? =
+                entries.firstOrNull { it.label == text }
+        }
     }
+
+
+    // SelectionResult에서 쓰면 label로 계속 보관
+    var currentEmotionLabel by mutableStateOf<String?>(null)
+
+    // Enum 자체도 보관
+    var currentEmotion: Emotion? by mutableStateOf(null)
+
+    // 유틸
+    private fun Food.has(vararg tags: Tag) = tags.any { it in this.tags }
+    private fun Food.hasAny(tags: Collection<Tag>) = tags.any { it in this.tags }
+
+    private fun candidatesByEmotion(e: Emotion): List<Food> {
+        val meats = listOf(Tags.Pork, Tags.Beef, Tags.Chicken, Tags.Lamb)
+        return when (e) {
+            Emotion.FAST_ONE -> FoodsData.foodsList.filter { it.has(Tags.Simple)}
+            Emotion.LIGHT_ONE -> FoodsData.foodsList.filter { it.has(Tags.OneBowl) }
+            Emotion.COLD -> FoodsData.foodsList.filter { it.has(Tags.Cold) }
+            Emotion.SPICY -> FoodsData.foodsList.filter { it.has(Tags.Spicy) }
+            Emotion.HEARTY -> FoodsData.foodsList.filter { food ->
+                val warmish = food.has(Tags.Hot) || food.has(Tags.Warm)
+                val hasMeat = food.hasAny(meats)
+                warmish && hasMeat
+            }
+        }
+    }
+
+    // 결과 화면 등에서 후보 전부 필요할 때
+    fun getFoodsByEmotion(e: Emotion): List<String> = candidatesByEmotion(e).map { it.title }
+
+    fun getFoodsByEmotion(label: String?): List<String> =
+        label?.let { Emotion.fromLabel(it) }?.let { getFoodsByEmotion(it) } ?: emptyList()
+
+    // 감정 선택 시 랜덤 음식 추천 함수
+    fun selectFoodByEmotion(e: Emotion): String {
+        val list = candidatesByEmotion(e)
+        currentEmotion = e
+        currentEmotionLabel = e.label
+        return list.randomOrNull()?.title ?: "❓"
+    }
+    fun selectFoodByEmotion(label: String): String =
+        Emotion.fromLabel(label)?.let { selectFoodByEmotion(it) } ?: "❓"
 
     // 랜덤 추천에서 사용할 데이터값을 변경하는 함수(추천된 데이터로 업데이트)
     fun updateSelectedCondition(newValue: String) {

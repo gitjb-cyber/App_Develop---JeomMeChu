@@ -13,7 +13,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,10 +39,20 @@ fun SelectionResultScreen(
     mainViewModel: MainViewModel
 ) {
     StatusBarView()
+    val selectedFood = mainViewModel.selectedCondition
+    val currentEmotion = mainViewModel.currentEmotion
     val context = LocalContext.current
+
     var showSaved by remember { mutableStateOf(false) }
 
-    val selectedFood by remember { derivedStateOf { mainViewModel.selectedCondition } }
+    val emotionList: List<String> = currentEmotion?.let { e ->
+        mainViewModel.getFoodsByEmotion(e)
+    } ?: emptyList()
+
+    // 현재 표시 중인 메뉴를 제외한 "다른 메뉴" 후보
+    val otherOptions = remember(selectedFood, currentEmotion, emotionList) {
+        emotionList.filter { it != selectedFood }
+    }
 
     Scaffold(
         topBar = {
@@ -71,6 +80,18 @@ fun SelectionResultScreen(
                     fontFamily = FontFamily(Font(R.font.jua_regular)),
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Button(
+                    onClick = {
+                        val next = otherOptions.randomOrNull() ?: selectedFood
+                        mainViewModel.updateSelectedCondition(next)   // VM 값만 바꿔도 화면이 갱신됨
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("다른 메뉴 추천")
+                }
 
                 Spacer(modifier = Modifier.height(12.dp))
 

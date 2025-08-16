@@ -29,20 +29,8 @@ fun SelectionEmotionScreen(
     navController: NavController,
     mainViewModel: MainViewModel
 ) {
+    val emotions = MainViewModel.Emotion.entries
     StatusBarView()
-    // 추후 태그 기반 추천에 사용할 수 있도록 보존
-    // val emotionTagMap = mapOf(
-    // "가볍게 먹고 싶어요" to listOf("가벼움", "소화 잘 됨"),
-    //     ...
-    // )
-
-    val emotions = listOf(
-        "가볍게 먹고 싶어요",
-        "얼큰하게 스트레스 풀고 싶어요",
-        "든든하게 배 채우고 싶어요",
-        "속이 안 좋아요"
-    )
-
     Scaffold(
         topBar = {
             AppBarView(navController = navController) { navController.navigateUp() }
@@ -73,7 +61,7 @@ fun SelectionEmotionScreen(
                             .fillMaxWidth()
                             .padding(vertical = 6.dp)
                     ) {
-                        Text(emotion, fontFamily = FontFamily(Font(R.font.jua_regular)))
+                        Text(emotion.label, fontFamily = FontFamily(Font(R.font.jua_regular)))
                     }
                 }
             }
