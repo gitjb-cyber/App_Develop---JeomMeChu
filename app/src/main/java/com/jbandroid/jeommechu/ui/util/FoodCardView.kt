@@ -68,8 +68,7 @@ fun FoodCardColumn(
                 text = groupTitle,
                 color = colorScheme.onBackground,
                 style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-                fontFamily = FontFamily(Font(R.font.jua_regular))
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp)
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -142,8 +141,7 @@ fun FoodCardColumn(
                             ) {
                                 Text(
                                     text = conditionKey,
-                                    style = MaterialTheme.typography.headlineSmall,
-                                    fontFamily = FontFamily(Font(R.font.jua_regular))
+                                    style = MaterialTheme.typography.headlineSmall
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -151,8 +149,7 @@ fun FoodCardColumn(
                                 subValues.forEach { tag ->
                                     Text(
                                         text = tag,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        fontFamily = FontFamily(Font(R.font.jua_regular))
+                                        style = MaterialTheme.typography.bodyMedium
                                     )
                                 }
                             }

@@ -60,13 +60,13 @@ fun StartScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.app_color)),
+            .background(colorResource(id = R.color.app_color))
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly,
+            verticalArrangement = Arrangement.SpaceEvenly
         ) {
             AnimatedVisibility(
                 visible = visible1,
@@ -113,11 +113,11 @@ fun StartScreen(
                     )
                     {
                         Text(
-                            text = "시작하기",
-                            color = MaterialTheme.colorScheme.primary,
-                            fontSize = 16.sp,
-                            fontFamily = FontFamily(Font(R.font.jua_regular))
-                        ) }
+                        text = "시작하기",
+                        color = Color.Black,
+                        fontSize = 16.sp
+                        )
+                    }
                 }
             }
         }

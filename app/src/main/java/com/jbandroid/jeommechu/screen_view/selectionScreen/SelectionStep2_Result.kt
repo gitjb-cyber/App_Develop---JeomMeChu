@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -26,7 +25,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.jbandroid.jeommechu.R
 import com.jbandroid.jeommechu.navigation.ScreenRoute
-import com.jbandroid.jeommechu.ui.util.AppBarView
+import com.jbandroid.jeommechu.ui.design.AppBackdrop
+import com.jbandroid.jeommechu.ui.design.AppPage
+import com.jbandroid.jeommechu.ui.design.AppTopBar
+import com.jbandroid.jeommechu.ui.design.JeomButtonPrimary
 import com.jbandroid.jeommechu.ui.util.SelectionCard
 import com.jbandroid.jeommechu.ui.util.StatusBarView
 import com.jbandroid.jeommechu.viewmodel.MainViewModel
@@ -56,73 +58,75 @@ fun SelectionResultScreen(
 
     Scaffold(
         topBar = {
-            AppBarView(navController = navController) { navController.navigateUp() }
+            AppTopBar(
+                title = "",
+                onBack = { navController.navigateUp() },
+                onCalendar = { navController.navigate(ScreenRoute.CalendarMemoScreen.route) }
+            )
         }
     ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            contentAlignment = Alignment.Center
-        ) {
-            SelectionCard(modifier = Modifier.padding(innerPadding)) {
-                Text(
-                    text = "오늘의 추천 음식은",
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontFamily = FontFamily(Font(R.font.jua_regular))
-                )
-
-                Spacer(modifier = Modifier.height(32.dp))
-
-                Text(
-                    text = if (selectedFood == "❓") "음식을 찾을 수 없어요..." else selectedFood,
-                    style = MaterialTheme.typography.displayMedium,
-                    fontFamily = FontFamily(Font(R.font.jua_regular)),
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Button(
-                    onClick = {
-                        val next = otherOptions.randomOrNull() ?: selectedFood
-                        mainViewModel.updateSelectedCondition(next)   // VM 값만 바꿔도 화면이 갱신됨
-                    },
-                    modifier = Modifier.fillMaxWidth()
+        AppBackdrop {
+            AppPage(innerPadding = innerPadding) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text("다른 메뉴 추천")
-                }
+                    SelectionCard {
+                        Text(
+                            text = "오늘의 추천 음식은",
+                            style = MaterialTheme.typography.headlineSmall
+                        )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(32.dp))
 
-                Button(
-                    onClick = {
-                        navController.navigate(ScreenRoute.UserMap.createRoute(selectedFood))
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("주변 음식점 찾기")
-                }
+                        Text(
+                            text = if (selectedFood == "❓") "음식을 찾을 수 없어요..." else selectedFood,
+                            style = MaterialTheme.typography.displayMedium,
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
 
-                Button(
-                    onClick = {
-                        val today = LocalDate.now().toString()
-                        mainViewModel.insertMemo(today, selectedFood)
-                        showSaved = true
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("메모에 추가하기")
-                }
-            }
+                        JeomButtonPrimary(
+                            text = "다른 메뉴 추천",
+                            onClick = {
+                                val next = otherOptions.randomOrNull() ?: selectedFood
+                                mainViewModel.updateSelectedCondition(next)   // VM 값만 바꿔도 화면이 갱신됨
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
 
-            if (showSaved) {
-                LaunchedEffect(Unit) {
-                    Toast.makeText(context, "메모에 저장되었습니다!", Toast.LENGTH_SHORT).show()
-                    delay(1500)
-                    showSaved = false
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        JeomButtonPrimary(
+                            text = "주변 음식점 찾기",
+                            onClick = {
+                                navController.navigate(ScreenRoute.UserMap.createRoute(selectedFood))
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        JeomButtonPrimary(
+                            text = "메모에 추가하기",
+                            onClick = {
+                                val today = LocalDate.now().toString()
+                                mainViewModel.insertMemo(today, selectedFood)
+                                showSaved = true
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+
+                    if (showSaved) {
+                        LaunchedEffect(Unit) {
+                            Toast.makeText(context, "메모에 저장되었습니다!", Toast.LENGTH_SHORT).show()
+                            delay(1500)
+                            showSaved = false
+                        }
+                    }
                 }
             }
         }

@@ -57,16 +57,13 @@ fun FeatureGroup(
 ) {
     Text(
         text = title,
-        style = MaterialTheme.typography.titleMedium,
-        fontFamily = FontFamily(Font(R.font.jua_regular))
+        style = MaterialTheme.typography.titleMedium
     )
 
     Spacer(modifier = Modifier.height(8.dp))
 
     FlowRow(
-        modifier = Modifier.fillMaxWidth(),
-        mainAxisSpacing = 12.dp,
-        crossAxisSpacing = 12.dp
+        modifier = Modifier.fillMaxWidth()
     ) {
         options.forEach { option ->
             val isChecked = buttonStates[option] ?: false

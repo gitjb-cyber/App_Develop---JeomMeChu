@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -46,7 +45,9 @@ import androidx.navigation.NavController
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.jbandroid.jeommechu.BuildConfig
-import com.jbandroid.jeommechu.ui.util.AppBarView
+import com.jbandroid.jeommechu.navigation.ScreenRoute
+import com.jbandroid.jeommechu.ui.design.AppTopBar
+import com.jbandroid.jeommechu.ui.design.JeomButtonPrimary
 import com.jbandroid.jeommechu.ui.util.StatusBarView
 import com.jbandroid.jeommechu.viewmodel.MainViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -148,7 +149,11 @@ fun UserMapScreen(
 
     Scaffold(
         topBar = {
-            AppBarView(navController = navController) { navController.navigateUp() }
+            AppTopBar(
+                title = "",
+                onBack = { navController.navigateUp() },
+                onCalendar = { navController.navigate(ScreenRoute.CalendarMemoScreen.route) }
+            )
         }
     ) { innerPadding ->
         Column(
@@ -285,17 +290,16 @@ fun UserMapScreen(
                                 Spacer(modifier = Modifier.height(8.dp))
 
                                 // 6. 지도에서 보기
-                                Button(
+                                JeomButtonPrimary(
+                                    text = "지도에서 보기",
                                     onClick = {
                                         val mapUrl =
                                             "https://map.kakao.com/link/map/${place.placeName},${place.latitude},${place.longitude}"
                                         val intent = Intent(Intent.ACTION_VIEW, mapUrl.toUri())
                                         context.startActivity(intent)
                                     },
-                                    modifier = Modifier.align(Alignment.End)
-                                ) {
-                                    Text("지도에서 보기")
-                                }
+                                    modifier = Modifier.fillMaxWidth()
+                                )
                             }
                         }
                     }
