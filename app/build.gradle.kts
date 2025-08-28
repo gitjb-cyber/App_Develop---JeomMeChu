@@ -28,9 +28,9 @@ android {
 
     defaultConfig {
         applicationId = "com.jbandroid.jeommechu"
-        minSdk = 35
+        minSdk = 26
         targetSdk = 36
-        versionCode = 3
+        versionCode = 5
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
