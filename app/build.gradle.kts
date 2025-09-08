@@ -22,6 +22,30 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+val versionPropsFile = rootProject.file("version.properties")
+val versionProps = Properties().apply {
+    if (versionPropsFile.exists()) load(versionPropsFile.inputStream())
+}
+// 이번 빌드가 release 인지 설정 단계에서 판별
+val isReleaseBuild = gradle.startParameter.taskNames.any { it.contains("Release", ignoreCase = true) }
+
+// 현재 코드 읽기
+var versionCodeFromFile = (versionProps["VERSION_CODE"]?.toString()?.toInt() ?: 1)
+
+// 만약 release 빌드라면 설정 단계에서 즉시 +1 하고 파일에 저장
+if (isReleaseBuild) {
+    versionCodeFromFile += 1
+    versionProps["VERSION_CODE"] = versionCodeFromFile.toString()
+    // .use { } 로 안전 저장 (Properties는 ISO-8859-1로 저장됨)
+    versionPropsFile.writer().use { writer ->
+        versionProps.store(writer, null)
+    }
+    println("📦 versionCode bumped for THIS release build → $versionCodeFromFile")
+}
+
+// versionName은 수동 관리(파일 그대로 사용)
+val versionNameValue: String = versionProps["VERSION_NAME"]?.toString() ?: "1.0.0"
+
 android {
     namespace = "com.jbandroid.jeommechu"
     compileSdk = 36
@@ -30,8 +54,8 @@ android {
         applicationId = "com.jbandroid.jeommechu"
         minSdk = 26
         targetSdk = 36
-        versionCode = 5
-        versionName = "1.0.0"
+        versionCode = versionCodeFromFile
+        versionName = versionNameValue
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
